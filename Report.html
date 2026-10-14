@@ -1,0 +1,1522 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="indigo">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>KnC Music - Reports & Analytics</title>
+    
+    <!-- FAVICON -->
+    <link rel="icon" type="image/svg+xml" id="favicon" href="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><clipPath id='c'><circle cx='50' cy='50' r='50'/></clipPath><g clip-path='url(%23c)'><rect width='100' height='100' fill='%23312e81'/><circle cx='50' cy='50' r='36' fill='%2318181b'/><circle cx='50' cy='50' r='15' fill='%236366f1'/><circle cx='50' cy='50' r='5' fill='%23ffffff'/></g></svg>">
+
+    <!-- FONTS -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- NAVIGATION INTEGRATION -->
+    <link rel="stylesheet" href="navigation.css">
+
+    <style>
+        :root {
+            --bg-gradient: linear-gradient(135deg, #090d16 0%, #111827 50%, #1e1b4b 100%);
+            --card-bg: rgba(255, 255, 255, 0.055);
+            --card-hover: rgba(255, 255, 255, 0.09);
+            --card-border: rgba(255, 255, 255, 0.12);
+            --card-border-subtle: rgba(255, 255, 255, 0.06);
+            --text-primary: #f8fafc;
+            --text-secondary: #94a3b8;
+            --text-muted: #64748b;
+            --accent: #6366f1;
+            --accent-rgb: 99, 102, 241;
+            --accent-hover: #4f46e5;
+            --accent-glow: rgba(99, 102, 241, 0.4);
+            --accent-glow-subtle: rgba(99, 102, 241, 0.15);
+            --danger: #f43f5e;
+            --success: #10b981;
+            --warning: #f59e0b;
+            --info: #0ea5e9;
+            --surface-raised: #111827;
+            --surface-inset: rgba(0, 0, 0, 0.28);
+            --utility-surface: rgba(255, 255, 255, 0.035);
+            --range-track: rgba(255, 255, 255, 0.2);
+            --radius-xl: 28px;
+            --radius-lg: 20px;
+            --radius-md: 14px;
+            --radius-sm: 8px;
+            --shadow-main: 0 25px 60px -15px rgba(0, 0, 0, 0.65), 0 0 1px 1px rgba(255, 255, 255, 0.05);
+        }
+
+        /* THEMES */
+        [data-theme="cyberpunk"] {
+            --bg-gradient: linear-gradient(135deg, #0a0512 0%, #180829 50%, #2b083a 100%);
+            --accent: #f43f5e;
+            --accent-rgb: 244, 63, 94;
+            --accent-hover: #e11d48;
+            --accent-glow: rgba(244, 63, 94, 0.45);
+            --accent-glow-subtle: rgba(244, 63, 94, 0.18);
+        }
+
+        [data-theme="emerald"] {
+            --bg-gradient: linear-gradient(135deg, #022c22 0%, #064e3b 50%, #065f46 100%);
+            --accent: #10b981;
+            --accent-rgb: 16, 185, 129;
+            --accent-hover: #059669;
+            --accent-glow: rgba(16, 185, 129, 0.45);
+            --accent-glow-subtle: rgba(16, 185, 129, 0.18);
+        }
+
+        [data-theme="sunset"] {
+            --bg-gradient: linear-gradient(135deg, #1f0d3d 0%, #3e1249 50%, #6b2138 100%);
+            --accent: #f97316;
+            --accent-rgb: 249, 115, 22;
+            --accent-hover: #ea580c;
+            --accent-glow: rgba(249, 115, 22, 0.45);
+            --accent-glow-subtle: rgba(249, 115, 22, 0.18);
+        }
+
+        [data-theme="light"] {
+            --bg-gradient: linear-gradient(135deg, #e2e8f0 0%, #f1f5f9 50%, #ffffff 100%);
+            --card-bg: rgba(255, 255, 255, 0.88);
+            --card-hover: rgba(255, 255, 255, 0.98);
+            --card-border: rgba(0, 0, 0, 0.08);
+            --card-border-subtle: rgba(0, 0, 0, 0.04);
+            --text-primary: #0f172a;
+            --text-secondary: #475569;
+            --text-muted: #64748b;
+            --accent: #4f46e5;
+            --accent-rgb: 79, 70, 229;
+            --accent-hover: #4338ca;
+            --accent-glow: rgba(79, 70, 229, 0.25);
+            --accent-glow-subtle: rgba(79, 70, 229, 0.12);
+            --shadow-main: 0 20px 45px -10px rgba(0, 0, 0, 0.12);
+            --surface-raised: #ffffff;
+            --surface-inset: #f1f5f9;
+            --utility-surface: rgba(15, 23, 42, 0.04);
+            --range-track: #cbd5e1;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            background: var(--bg-gradient);
+            background-attachment: fixed;
+            min-height: 100vh;
+            color: var(--text-primary);
+            display: flex;
+            justify-content: center;
+            padding: 28px 16px 120px 16px;
+            overflow-x: hidden;
+            position: relative;
+        }
+
+        body::before, body::after {
+            content: '';
+            position: fixed;
+            border-radius: 50%;
+            filter: blur(120px);
+            z-index: 0;
+            pointer-events: none;
+            opacity: 0.22;
+        }
+        body::before {
+            width: 420px;
+            height: 420px;
+            background: var(--accent);
+            top: -100px;
+            left: -100px;
+        }
+        body::after {
+            width: 360px;
+            height: 360px;
+            background: #8b5cf6;
+            bottom: -60px;
+            right: -60px;
+        }
+
+        /* CIRCULAR BACK BUTTON (DESKTOP ONLY) */
+        .page-back-button {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            z-index: 100;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 44px;
+            height: 44px;
+            border-radius: 50%;
+            background: var(--card-bg);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid var(--card-border);
+            color: var(--text-primary);
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.25);
+            cursor: pointer;
+            transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        .page-back-button:hover {
+            background: var(--card-hover);
+            transform: scale(1.06) translateX(-2px);
+            border-color: var(--accent);
+            box-shadow: 0 0 18px var(--accent-glow);
+        }
+        .page-back-button svg {
+            width: 20px;
+            height: 20px;
+            stroke-width: 2.4;
+            transition: transform 0.2s ease;
+        }
+        .page-back-button:hover svg {
+            transform: translateX(-2px);
+        }
+
+        /* STRICT MOBILE BEHAVIOR: Back button ONLY on desktop */
+        @media (max-width: 768px) {
+            .page-back-button {
+                display: none !important;
+            }
+        }
+
+        /* MAIN CONTAINER */
+        .report-container {
+            width: 100%;
+            max-width: 920px;
+            position: relative;
+            z-index: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 22px;
+            animation: fadeIn 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* HEADER */
+        .report-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 12px;
+            padding: 8px 6px;
+        }
+        .header-brand {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        @media (min-width: 769px) {
+            .header-brand {
+                padding-left: 48px; /* Offset for desktop back button */
+            }
+        }
+        .brand-badge {
+            width: 38px;
+            height: 38px;
+            border-radius: 12px;
+            background: var(--accent);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 0 18px var(--accent-glow);
+            flex-shrink: 0;
+        }
+        .brand-badge svg {
+            width: 20px;
+            height: 20px;
+            fill: #ffffff;
+        }
+        .brand-titles h1 {
+            font-size: 1.35rem;
+            font-weight: 800;
+            letter-spacing: -0.02em;
+            line-height: 1.2;
+        }
+        .brand-titles p {
+            font-size: 0.78rem;
+            color: var(--text-secondary);
+            font-weight: 500;
+        }
+
+        /* GLASS CARD COMMON */
+        .glass-card {
+            background: var(--card-bg);
+            backdrop-filter: blur(24px);
+            -webkit-backdrop-filter: blur(24px);
+            border: 1px solid var(--card-border);
+            border-radius: var(--radius-xl);
+            padding: 24px;
+            box-shadow: var(--shadow-main);
+            position: relative;
+        }
+
+        .card-header-bar {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 12px;
+            margin-bottom: 20px;
+        }
+        .card-title-group {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        .card-icon {
+            width: 36px;
+            height: 36px;
+            border-radius: 10px;
+            background: rgba(var(--accent-rgb), 0.15);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--accent);
+            flex-shrink: 0;
+        }
+        .card-icon svg {
+            width: 19px;
+            height: 19px;
+            stroke-width: 2.2;
+        }
+        .card-title {
+            font-size: 1.15rem;
+            font-weight: 800;
+            letter-spacing: -0.01em;
+        }
+        .card-subtitle {
+            font-size: 0.78rem;
+            color: var(--text-secondary);
+        }
+
+        /* ========================================================= */
+        /* 1. CALENDAR SUMMARY CARD                                  */
+        /* ========================================================= */
+        .calendar-controls {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 12px;
+            margin-bottom: 16px;
+        }
+
+        /* Home vs Gym Summary Toggle */
+        .summary-toggle-pill {
+            display: inline-flex;
+            background: var(--surface-inset);
+            padding: 4px;
+            border-radius: 14px;
+            border: 1px solid var(--card-border-subtle);
+        }
+        .summary-toggle-btn {
+            background: transparent;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 10px;
+            font-size: 0.82rem;
+            font-weight: 700;
+            color: var(--text-secondary);
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            transition: all 0.2s ease;
+        }
+        .summary-toggle-btn:hover {
+            color: var(--text-primary);
+        }
+        .summary-toggle-btn.active {
+            background: var(--accent);
+            color: #ffffff;
+            box-shadow: 0 2px 10px var(--accent-glow);
+        }
+
+        /* Month Navigation */
+        .month-nav {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .month-title {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.95rem;
+            font-weight: 700;
+            min-width: 140px;
+            text-align: center;
+            color: var(--text-primary);
+        }
+        .month-btn {
+            background: var(--surface-inset);
+            border: 1px solid var(--card-border);
+            color: var(--text-primary);
+            width: 32px;
+            height: 32px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+        .month-btn:hover:not(:disabled) {
+            background: var(--card-hover);
+            border-color: var(--accent);
+            transform: scale(1.05);
+        }
+        .month-btn:disabled {
+            opacity: 0.3;
+            cursor: not-allowed;
+        }
+        .month-btn svg {
+            width: 16px;
+            height: 16px;
+            stroke-width: 2.4;
+        }
+
+        /* CALENDAR GRID */
+        .calendar-grid {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            gap: 6px;
+            background: var(--surface-inset);
+            border: 1px solid var(--card-border-subtle);
+            border-radius: var(--radius-lg);
+            padding: 14px;
+        }
+        .cal-header-day {
+            text-align: center;
+            font-size: 0.72rem;
+            font-weight: 800;
+            text-transform: uppercase;
+            color: var(--text-muted);
+            padding: 4px 0;
+            letter-spacing: 0.05em;
+        }
+        .cal-day-cell {
+            aspect-ratio: 1;
+            min-height: 42px;
+            border-radius: 12px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 3px;
+            position: relative;
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid transparent;
+            cursor: pointer;
+            transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+            user-select: none;
+        }
+        .cal-day-cell:hover:not(.empty):not(.future) {
+            background: var(--card-hover);
+            border-color: var(--card-border);
+            transform: translateY(-2px);
+        }
+        .cal-day-cell.empty {
+            background: transparent;
+            cursor: default;
+            pointer-events: none;
+        }
+        .cal-day-cell.future {
+            opacity: 0.28;
+            cursor: not-allowed;
+            background: rgba(0, 0, 0, 0.2);
+            border-style: dashed;
+            border-color: rgba(255, 255, 255, 0.05);
+        }
+        .cal-day-cell.today {
+            border-color: var(--accent);
+            box-shadow: 0 0 10px var(--accent-glow-subtle);
+        }
+        .cal-day-cell.has-workout {
+            background: linear-gradient(135deg, rgba(var(--accent-rgb), 0.2) 0%, rgba(16, 185, 129, 0.15) 100%);
+            border-color: rgba(16, 185, 129, 0.45);
+        }
+        .cal-day-num {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.84rem;
+            font-weight: 700;
+        }
+        .workout-indicator-dot {
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            background: var(--success);
+            box-shadow: 0 0 8px var(--success);
+        }
+
+        /* CALENDAR WORKOUT DETAIL POPUP / DRAWER */
+        .day-detail-panel {
+            margin-top: 16px;
+            background: var(--surface-inset);
+            border: 1px solid var(--accent);
+            border-radius: var(--radius-lg);
+            padding: 18px;
+            display: none;
+            flex-direction: column;
+            gap: 12px;
+            animation: fadeIn 0.25s ease;
+        }
+        .day-detail-panel.open {
+            display: flex;
+        }
+        .detail-panel-top {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        .detail-date-title {
+            font-size: 1rem;
+            font-weight: 800;
+            color: var(--text-primary);
+        }
+        .detail-close-btn {
+            background: transparent;
+            border: none;
+            color: var(--text-muted);
+            font-size: 1.2rem;
+            cursor: pointer;
+            padding: 2px 6px;
+            border-radius: 6px;
+        }
+        .detail-close-btn:hover {
+            color: var(--danger);
+        }
+        .detail-exercise-list {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+        .detail-item {
+            background: rgba(255, 255, 255, 0.04);
+            border: 1px solid var(--card-border-subtle);
+            border-radius: var(--radius-md);
+            padding: 10px 14px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            font-size: 0.86rem;
+        }
+        .detail-item-name {
+            font-weight: 700;
+        }
+        .detail-item-meta {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.76rem;
+            color: var(--accent);
+            font-weight: 700;
+        }
+
+        /* ========================================================= */
+        /* 2. HISTORY & RECORDS CARD                                 */
+        /* ========================================================= */
+        .records-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 12px;
+            margin-bottom: 20px;
+        }
+        .record-card {
+            background: var(--surface-inset);
+            border: 1px solid var(--card-border-subtle);
+            border-radius: var(--radius-md);
+            padding: 16px;
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+            position: relative;
+            overflow: hidden;
+        }
+        .record-icon-badge {
+            width: 32px;
+            height: 32px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.1rem;
+            margin-bottom: 4px;
+        }
+        .record-card.streak .record-icon-badge {
+            background: rgba(245, 158, 11, 0.15);
+        }
+        .record-card.workouts .record-icon-badge {
+            background: rgba(99, 102, 241, 0.15);
+        }
+        .record-card.best .record-icon-badge {
+            background: rgba(16, 185, 129, 0.15);
+        }
+        .record-label {
+            font-size: 0.72rem;
+            font-weight: 700;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+        .record-val {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 1.7rem;
+            font-weight: 800;
+            line-height: 1;
+            color: var(--text-primary);
+        }
+        .record-foot {
+            font-size: 0.72rem;
+            color: var(--text-muted);
+        }
+
+        /* ========================================================= */
+        /* 3 & 4. WEIGHT LOG & BMI GRAPHS                            */
+        /* ========================================================= */
+        .graphs-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 20px;
+        }
+        @media (min-width: 768px) {
+            .graphs-grid {
+                grid-template-columns: 1fr 1fr;
+            }
+        }
+
+        .chart-box {
+            width: 100%;
+            height: 190px;
+            position: relative;
+            margin-top: 14px;
+        }
+        .chart-svg {
+            width: 100%;
+            height: 100%;
+            overflow: visible;
+        }
+
+        .chart-header-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        .chart-current-stat {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 1.45rem;
+            font-weight: 800;
+            color: var(--text-primary);
+        }
+        .chart-badge {
+            font-size: 0.74rem;
+            font-weight: 700;
+            padding: 3px 8px;
+            border-radius: 6px;
+        }
+        .chart-badge.success {
+            background: rgba(16, 185, 129, 0.15);
+            color: var(--success);
+        }
+        .chart-badge.normal {
+            background: rgba(16, 185, 129, 0.15);
+            color: var(--success);
+        }
+
+        /* Quick Log Weight Button */
+        .log-weight-btn {
+            background: var(--surface-inset);
+            border: 1px solid var(--card-border);
+            color: var(--text-primary);
+            padding: 6px 12px;
+            border-radius: 8px;
+            font-size: 0.74rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+        .log-weight-btn:hover {
+            border-color: var(--accent);
+            background: var(--card-hover);
+        }
+
+        /* Tooltip */
+        .graph-tooltip {
+            position: absolute;
+            background: var(--surface-raised);
+            border: 1px solid var(--accent);
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.5);
+            padding: 4px 8px;
+            border-radius: 6px;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.72rem;
+            font-weight: 700;
+            color: #ffffff;
+            pointer-events: none;
+            opacity: 0;
+            transition: opacity 0.15s ease;
+            z-index: 20;
+            transform: translate(-50%, -120%);
+            white-space: nowrap;
+        }
+
+        /* ========================================================= */
+        /* FLOATING BELT                                             */
+        /* ========================================================= */
+        .floating-belt {
+            position: fixed;
+            left: 50%;
+            bottom: calc(16px + env(safe-area-inset-bottom, 0px));
+            z-index: 110;
+            display: flex;
+            align-items: center;
+            justify-content: space-around;
+            width: min(540px, calc(100% - 32px));
+            min-height: 54px;
+            padding: 6px 12px;
+            background: var(--surface-raised);
+            backdrop-filter: blur(24px);
+            -webkit-backdrop-filter: blur(24px);
+            border: 1px solid var(--card-border);
+            border-radius: var(--radius-lg);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4), 0 0 1px 1px rgba(255, 255, 255, 0.05);
+            opacity: 0;
+            pointer-events: none;
+            transform: translate(-50%, calc(100% + 24px));
+            transition: opacity 0.25s ease, transform 0.25s ease;
+        }
+        .floating-belt.visible {
+            opacity: 1;
+            pointer-events: auto;
+            transform: translate(-50%, 0);
+        }
+        .floating-belt-item {
+            display: flex;
+            flex: 1;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 3px;
+            color: var(--text-secondary);
+            font-size: 0.62rem;
+            font-weight: 600;
+            line-height: 1;
+            text-decoration: none;
+            white-space: nowrap;
+            transition: color 0.15s ease;
+        }
+        .floating-belt-item:hover {
+            color: var(--text-primary);
+        }
+        .floating-belt-item.active-page {
+            color: var(--accent);
+            font-weight: 700;
+        }
+        .floating-belt-item svg {
+            width: 18px;
+            height: 18px;
+            fill: currentColor;
+        }
+        @media (max-width: 600px) {
+            .floating-belt {
+                width: calc(100% - 20px);
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- BACK TO MUSIC PLAYER BUTTON (DESKTOP ONLY via CSS media query) -->
+    <button class="page-back-button" type="button" aria-label="Go back to Music Player" title="Back to KnC Music">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="15 18 9 12 15 6"></polyline>
+        </svg>
+    </button>
+
+    <main class="report-container">
+        
+        <!-- HEADER -->
+        <header class="report-header">
+            <div class="header-brand">
+                <div class="brand-badge" aria-hidden="true">
+                    <svg viewBox="0 0 24 24"><path d="M14 2H6c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V8l-6-6zm-1 1.5L18.5 9H13V3.5zM8 13h8v1.5H8V13zm0 3h8v1.5H8V16zm0-6h2v1.5H8V10z"/></svg>
+                </div>
+                <div class="brand-titles">
+                    <h1>KnC Report</h1>
+                    <p>Workout History &amp; Body Analytics</p>
+                </div>
+            </div>
+        </header>
+
+        <!-- ========================================================= -->
+        <!-- 1. CALENDAR SUMMARY CARD                                  -->
+        <!-- ========================================================= -->
+        <section class="glass-card" aria-labelledby="calHeading">
+            <div class="card-header-bar">
+                <div class="card-title-group">
+                    <div class="card-icon">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round">
+                            <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+                            <line x1="16" y1="2" x2="16" y2="6"></line>
+                            <line x1="8" y1="2" x2="8" y2="6"></line>
+                            <line x1="3" y1="10" x2="21" y2="10"></line>
+                        </svg>
+                    </div>
+                    <div>
+                        <h2 id="calHeading" class="card-title">Calendar Summary</h2>
+                        <p class="card-subtitle">Tap any completed day to inspect the workout breakdown</p>
+                    </div>
+                </div>
+
+                <!-- MONTH NAVIGATOR (Can scroll back to previous months, future blocked) -->
+                <div class="month-nav">
+                    <button type="button" class="month-btn" id="prevMonthBtn" title="Previous Month">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><polyline points="15 18 9 12 15 6"></polyline></svg>
+                    </button>
+                    <span class="month-title" id="currentMonthTitle">October 2026</span>
+                    <button type="button" class="month-btn" id="nextMonthBtn" title="Next Month" disabled>
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><polyline points="9 18 15 12 9 6"></polyline></svg>
+                    </button>
+                </div>
+            </div>
+
+            <!-- TOGGLE: HOME WORKOUTS SUMMARY VS GYM SUMMARY -->
+            <div class="calendar-controls">
+                <div class="summary-toggle-pill" role="radiogroup" aria-label="Workout Mode Summary">
+                    <button type="button" class="summary-toggle-btn active" id="toggleHome" role="radio" aria-checked="true">
+                        <span>🏠 Home Workouts</span>
+                    </button>
+                    <button type="button" class="summary-toggle-btn" id="toggleGym" role="radio" aria-checked="false">
+                        <span>🏋️ Gym Summary</span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- INTERACTIVE CALENDAR GRID -->
+            <div class="calendar-grid" id="calendarGrid">
+                <!-- Populated dynamically via JS -->
+            </div>
+
+            <!-- WORKOUT DAY DETAILS POPUP (Opens on pressing a trained day) -->
+            <div class="day-detail-panel" id="dayDetailPanel">
+                <div class="detail-panel-top">
+                    <div>
+                        <h3 class="detail-date-title" id="detailDateTitle">Date</h3>
+                        <span style="font-size: 0.74rem; color: var(--accent); font-weight: 700;" id="detailTypeBadge">Home Workout</span>
+                    </div>
+                    <button type="button" class="detail-close-btn" id="closeDetailBtn" title="Close">×</button>
+                </div>
+                <div class="detail-exercise-list" id="detailExerciseList">
+                    <!-- Populated dynamically -->
+                </div>
+            </div>
+        </section>
+
+        <!-- ========================================================= -->
+        <!-- 2. HISTORY & RECORDS CARD                                 -->
+        <!-- ========================================================= -->
+        <section class="glass-card" aria-labelledby="recordsHeading">
+            <div class="card-header-bar">
+                <div class="card-title-group">
+                    <div class="card-icon">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round">
+                            <circle cx="12" cy="8" r="7"></circle>
+                            <polyline points="8.21 13.89 7 23 12 20 17 23 15.79 13.88"></polyline>
+                        </svg>
+                    </div>
+                    <div>
+                        <h2 id="recordsHeading" class="card-title">Training Records &amp; Milestones</h2>
+                        <p class="card-subtitle">Consistency streak and lifetime performance bests</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="records-grid">
+                <div class="record-card streak">
+                    <div class="record-icon-badge">🔥</div>
+                    <span class="record-label">Current Streak</span>
+                    <span class="record-val" id="currentStreakVal">5 Days</span>
+                    <span class="record-foot">Active daily habit</span>
+                </div>
+                <div class="record-card best">
+                    <div class="record-icon-badge">🏆</div>
+                    <span class="record-label">Best Streak</span>
+                    <span class="record-val" id="bestStreakVal">14 Days</span>
+                    <span class="record-foot">All-time record</span>
+                </div>
+                <div class="record-card workouts">
+                    <div class="record-icon-badge">⚡</div>
+                    <span class="record-label">Total Workouts</span>
+                    <span class="record-val" id="totalWorkoutsVal">38</span>
+                    <span class="record-foot">Logged sessions</span>
+                </div>
+                <div class="record-card">
+                    <div class="record-icon-badge">🎯</div>
+                    <span class="record-label">Sets Completed</span>
+                    <span class="record-val" id="totalSetsVal">142</span>
+                    <span class="record-foot">10 reps each set</span>
+                </div>
+            </div>
+        </section>
+
+        <!-- ========================================================= -->
+        <!-- 3 & 4. WEIGHT TRACKING & BMI GRAPHS                       -->
+        <!-- ========================================================= -->
+        <div class="graphs-grid">
+            
+            <!-- WEIGHT OVER TIME GRAPH -->
+            <section class="glass-card" aria-labelledby="weightHeading">
+                <div class="chart-header-row">
+                    <div>
+                        <span style="font-size: 0.72rem; font-weight: 700; color: var(--text-secondary); text-transform: uppercase;">Weight Log</span>
+                        <div class="chart-current-stat" id="currentWeightDisplay">71.5 kg</div>
+                    </div>
+                    <button type="button" class="log-weight-btn" id="logWeightQuickBtn">+ Log Weight</button>
+                </div>
+
+                <div class="chart-box" id="weightChartContainer">
+                    <div class="graph-tooltip" id="weightTooltip"></div>
+                    <svg class="chart-svg" id="weightChartSvg"></svg>
+                </div>
+            </section>
+
+            <!-- BMI OVER TIME GRAPH -->
+            <section class="glass-card" aria-labelledby="bmiHeading">
+                <div class="chart-header-row">
+                    <div>
+                        <span style="font-size: 0.72rem; font-weight: 700; color: var(--text-secondary); text-transform: uppercase;">BMI Over Time</span>
+                        <div class="chart-current-stat" id="currentBmiDisplay">22.8</div>
+                    </div>
+                    <span class="chart-badge normal" id="bmiStatusBadge">Optimal Normal</span>
+                </div>
+
+                <div class="chart-box" id="bmiChartContainer">
+                    <div class="graph-tooltip" id="bmiTooltip"></div>
+                    <svg class="chart-svg" id="bmiChartSvg"></svg>
+                </div>
+            </section>
+
+        </div>
+
+    </main>
+
+    <!-- FLOATING BELT (Quick Access Navigation Across All Pages except Profile) -->
+    <nav class="floating-belt" id="floatingBelt" aria-label="Quick access">
+        <a class="floating-belt-item" href="index.html" aria-label="Music" title="Music">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3v10.55c-.59-.34-1.27-.55-2-.55-2.21 0-4 1.79-4 4s1.79 4 4 4 4-1.79 4-4V7h4V3h-6z"/></svg>
+            <span>Music</span>
+        </a>
+        <a class="floating-belt-item" href="Training.html" aria-label="Gym training" title="Gym training">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20.57 14.86 22 13.43 20.57 12l-3.57 3.57-8.57-8.57L12 3.43 10.57 2 9.14 3.43 7.71 2 5.57 4.14 4.14 2.71 2.71 4.14l1.43 1.43L2 7.71l1.43 1.43L2 10.57 3.43 12l3.57-3.57 8.57 8.57L12 20.57 13.43 22l1.43-1.43L16.29 22l2.14-2.14 1.43 1.43 1.43-1.43-1.43-1.43L22 16.29z"/></svg>
+            <span>Training</span>
+        </a>
+        <a class="floating-belt-item active-page" href="Report.html" aria-label="Report" title="Report">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M14 2H6c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V8l-6-6zm-1 1.5L18.5 9H13V3.5zM8 13h8v1.5H8V13zm0 3h8v1.5H8V16zm0-6h2v1.5H8V10z"/></svg>
+            <span>Report</span>
+        </a>
+        <a class="floating-belt-item" href="Profile.html" aria-label="Profile" title="Profile">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/></svg>
+            <span>Profile</span>
+        </a>
+    </nav>
+
+    <!-- REPORT LOGIC -->
+    <script>
+        (() => {
+            // SYNC THEME
+            const savedTheme = localStorage.getItem("knc_theme") || "indigo";
+            document.documentElement.setAttribute("data-theme", savedTheme);
+
+            // ============================================================
+            // SEED MOCK DATA IF EMPTY (Gives rich calendar & graphs on day 1)
+            // ============================================================
+            function ensureSeedData() {
+                // Workout History
+                if (!localStorage.getItem("knc_workout_history")) {
+                    const sampleHistory = {
+                        "2026-09-18": { home: [{ name: "Standard Push-Ups" }, { name: "Air Squats" }, { name: "Plank Hold" }] },
+                        "2026-09-19": { gym: [{ name: "Barbell Bench Press", sets: 4, reps: 10 }, { name: "Incline Dumbbell Press", sets: 3, reps: 10 }] },
+                        "2026-09-21": { home: [{ name: "Walking Lunges" }, { name: "Burpees" }] },
+                        "2026-09-23": { gym: [{ name: "Barbell Deadlift", sets: 4, reps: 10 }, { name: "Lat Pulldown", sets: 4, reps: 10 }] },
+                        "2026-09-24": { home: [{ name: "Diamond Push-Ups" }, { name: "Bicycle Crunches" }] },
+                        "2026-09-26": { gym: [{ name: "Barbell Back Squats", sets: 4, reps: 10 }, { name: "Leg Press", sets: 4, reps: 10 }] },
+                        "2026-09-28": { home: [{ name: "Doorframe Rows" }, { name: "Glute Bridges" }] },
+                        "2026-09-30": { gym: [{ name: "Military Barbell Press", sets: 4, reps: 10 }, { name: "Lateral Raises", sets: 4, reps: 10 }] },
+                        "2026-10-02": { home: [{ name: "Pike Push-Ups" }, { name: "Mountain Climbers" }] },
+                        "2026-10-04": { gym: [{ name: "Barbell Bicep Curls", sets: 3, reps: 10 }, { name: "Tricep Pushdowns", sets: 4, reps: 10 }] },
+                        "2026-10-06": { home: [{ name: "Air Squats" }, { name: "Forearm Plank" }] },
+                        "2026-10-08": { gym: [{ name: "Bench Press", sets: 4, reps: 10 }, { name: "Cable Flyes", sets: 3, reps: 10 }] },
+                        "2026-10-10": { home: [{ name: "Standard Push-Ups" }, { name: "Glute Bridges" }, { name: "Burpees" }] },
+                        "2026-10-11": { gym: [{ name: "Deadlift", sets: 4, reps: 10 }, { name: "Seated Cable Rows", sets: 4, reps: 10 }] },
+                        "2026-10-12": { home: [{ name: "Walking Lunges" }, { name: "Plank Hold" }] },
+                        "2026-10-13": { gym: [{ name: "Squats", sets: 4, reps: 10 }, { name: "Hamstring Curls", sets: 3, reps: 10 }] },
+                        "2026-10-14": { home: [{ name: "Dynamic Warm-Up" }, { name: "Push-Ups" }, { name: "Mountain Climbers" }], gym: [{ name: "Bench Press", sets: 4, reps: 10 }] }
+                    };
+                    localStorage.setItem("knc_workout_history", JSON.stringify(sampleHistory));
+                }
+
+                // Weight & BMI History
+                if (!localStorage.getItem("knc_weight_history")) {
+                    const sampleWeights = [
+                        { date: "2026-09-15", weight: 74.5, bmi: 24.3 },
+                        { date: "2026-09-22", weight: 73.8, bmi: 24.1 },
+                        { date: "2026-09-29", weight: 73.0, bmi: 23.8 },
+                        { date: "2026-10-06", weight: 72.2, bmi: 23.5 },
+                        { date: "2026-10-14", weight: 71.5, bmi: 23.3 }
+                    ];
+                    localStorage.setItem("knc_weight_history", JSON.stringify(sampleWeights));
+                }
+            }
+            ensureSeedData();
+
+            // ============================================================
+            // CALENDAR SUMMARY
+            // ============================================================
+            let currentSummaryMode = "home"; // 'home' | 'gym'
+            const today = new Date();
+            let viewYear = today.getFullYear();
+            let viewMonth = today.getMonth(); // 0-indexed (9 = Oct)
+
+            const prevMonthBtn = document.getElementById("prevMonthBtn");
+            const nextMonthBtn = document.getElementById("nextMonthBtn");
+            const currentMonthTitle = document.getElementById("currentMonthTitle");
+            const calendarGrid = document.getElementById("calendarGrid");
+            const toggleHome = document.getElementById("toggleHome");
+            const toggleGym = document.getElementById("toggleGym");
+
+            const dayDetailPanel = document.getElementById("dayDetailPanel");
+            const detailDateTitle = document.getElementById("detailDateTitle");
+            const detailTypeBadge = document.getElementById("detailTypeBadge");
+            const detailExerciseList = document.getElementById("detailExerciseList");
+            const closeDetailBtn = document.getElementById("closeDetailBtn");
+
+            const monthNames = [
+                "January", "February", "March", "April", "May", "June",
+                "July", "August", "September", "October", "November", "December"
+            ];
+
+            function getWorkoutHistory() {
+                try {
+                    return JSON.parse(localStorage.getItem("knc_workout_history") || "{}");
+                } catch(e) {
+                    return {};
+                }
+            }
+
+            function renderCalendar() {
+                currentMonthTitle.textContent = `${monthNames[viewMonth]} ${viewYear}`;
+
+                // Block nextMonthBtn if viewing current month or future
+                const isCurrentMonthOrFuture = (viewYear > today.getFullYear()) || (viewYear === today.getFullYear() && viewMonth >= today.getMonth());
+                nextMonthBtn.disabled = isCurrentMonthOrFuture;
+
+                calendarGrid.innerHTML = "";
+
+                // Weekday headers
+                const daysOfWeek = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
+                daysOfWeek.forEach(d => {
+                    const header = document.createElement("div");
+                    header.className = "cal-header-day";
+                    header.textContent = d;
+                    calendarGrid.appendChild(header);
+                });
+
+                // First day of month (0 = Sun, 1 = Mon ... 6 = Sat)
+                const firstDay = new Date(viewYear, viewMonth, 1).getDay();
+                // Adjust to Mon=0 ... Sun=6
+                const startOffset = (firstDay + 6) % 7;
+
+                // Total days in month
+                const totalDays = new Date(viewYear, viewMonth + 1, 0).getDate();
+
+                // Empty cells
+                for (let i = 0; i < startOffset; i++) {
+                    const emptyCell = document.createElement("div");
+                    emptyCell.className = "cal-day-cell empty";
+                    calendarGrid.appendChild(emptyCell);
+                }
+
+                const history = getWorkoutHistory();
+
+                // Days
+                for (let d = 1; d <= totalDays; d++) {
+                    const cellDate = new Date(viewYear, viewMonth, d);
+                    const cellDateStr = `${viewYear}-${String(viewMonth + 1).padStart(2, '0')}-${String(d).padStart(2, '0')}`;
+
+                    const cell = document.createElement("div");
+                    cell.className = "cal-day-cell";
+                    cell.innerHTML = `<span class="cal-day-num">${d}</span>`;
+
+                    const isToday = cellDate.toDateString() === today.toDateString();
+                    if (isToday) cell.classList.add("today");
+
+                    // BLOCK FUTURE DATES: Dimmed & Unclickable
+                    const isFuture = cellDate > today;
+                    if (isFuture) {
+                        cell.classList.add("future");
+                        cell.title = "Future date";
+                    } else {
+                        // Check if trained on this day for the active summary mode
+                        const dayLog = history[cellDateStr];
+                        const hasWorkout = dayLog && dayLog[currentSummaryMode] && dayLog[currentSummaryMode].length > 0;
+
+                        if (hasWorkout) {
+                            cell.classList.add("has-workout");
+                            cell.title = `${currentSummaryMode === 'home' ? 'Home Workout' : 'Gym Session'} completed!`;
+                            const dot = document.createElement("div");
+                            dot.className = "workout-indicator-dot";
+                            cell.appendChild(dot);
+                        }
+
+                        // Clicking a day opens detail
+                        cell.addEventListener("click", () => {
+                            openDayDetails(cellDateStr, cellDate, dayLog);
+                        });
+                    }
+
+                    calendarGrid.appendChild(cell);
+                }
+            }
+
+            function openDayDetails(dateStr, dateObj, dayLog) {
+                const options = { weekday: 'long', year: 'numeric', month: 'short', day: 'numeric' };
+                detailDateTitle.textContent = dateObj.toLocaleDateString(undefined, options);
+
+                const modeLabel = currentSummaryMode === 'home' ? 'Home Workout' : 'Gym Session';
+                detailTypeBadge.textContent = modeLabel;
+
+                detailExerciseList.innerHTML = "";
+                const workouts = (dayLog && dayLog[currentSummaryMode]) ? dayLog[currentSummaryMode] : [];
+
+                if (workouts.length === 0) {
+                    detailExerciseList.innerHTML = `
+                        <div style="padding: 14px; text-align: center; color: var(--text-muted); font-size: 0.82rem;">
+                            No ${modeLabel} logged on this date.
+                        </div>
+                    `;
+                } else {
+                    workouts.forEach(w => {
+                        const row = document.createElement("div");
+                        row.className = "detail-item";
+                        const wName = typeof w === 'string' ? w : w.name;
+                        const wMeta = (w.sets && w.reps) ? `${w.sets} Sets × ${w.reps} Reps` : (w.muscle || 'Completed');
+                        row.innerHTML = `
+                            <span class="detail-item-name">✓ ${wName}</span>
+                            <span class="detail-item-meta">${wMeta}</span>
+                        `;
+                        detailExerciseList.appendChild(row);
+                    });
+                }
+
+                dayDetailPanel.classList.add("open");
+                dayDetailPanel.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+            }
+
+            closeDetailBtn.addEventListener("click", () => {
+                dayDetailPanel.classList.remove("open");
+            });
+
+            // Month navigation
+            prevMonthBtn.addEventListener("click", () => {
+                viewMonth--;
+                if (viewMonth < 0) {
+                    viewMonth = 11;
+                    viewYear--;
+                }
+                dayDetailPanel.classList.remove("open");
+                renderCalendar();
+            });
+
+            nextMonthBtn.addEventListener("click", () => {
+                const isCurrent = (viewYear === today.getFullYear() && viewMonth >= today.getMonth());
+                if (isCurrent) return; // Future blocked
+                viewMonth++;
+                if (viewMonth > 11) {
+                    viewMonth = 0;
+                    viewYear++;
+                }
+                dayDetailPanel.classList.remove("open");
+                renderCalendar();
+            });
+
+            // Summary Toggles
+            toggleHome.addEventListener("click", () => {
+                currentSummaryMode = "home";
+                toggleHome.classList.add("active");
+                toggleGym.classList.remove("active");
+                toggleHome.setAttribute("aria-checked", "true");
+                toggleGym.setAttribute("aria-checked", "false");
+                dayDetailPanel.classList.remove("open");
+                renderCalendar();
+            });
+
+            toggleGym.addEventListener("click", () => {
+                currentSummaryMode = "gym";
+                toggleGym.classList.add("active");
+                toggleHome.classList.remove("active");
+                toggleGym.setAttribute("aria-checked", "true");
+                toggleHome.setAttribute("aria-checked", "false");
+                dayDetailPanel.classList.remove("open");
+                renderCalendar();
+            });
+
+            // ============================================================
+            // 2. RECORDS & STREAKS COMPUTATION
+            // ============================================================
+            function computeRecords() {
+                const history = getWorkoutHistory();
+                const dates = Object.keys(history).sort();
+
+                let totalWorkouts = 0;
+                let totalSets = 0;
+
+                dates.forEach(d => {
+                    const entry = history[d];
+                    if (entry.home && entry.home.length > 0) totalWorkouts++;
+                    if (entry.gym && entry.gym.length > 0) {
+                        totalWorkouts++;
+                        entry.gym.forEach(g => {
+                            totalSets += (g.sets || 3);
+                        });
+                    }
+                });
+
+                // Calculate active day streak
+                let streak = 0;
+                let checkDate = new Date();
+                while (true) {
+                    const dStr = checkDate.toISOString().split('T')[0];
+                    const entry = history[dStr];
+                    const hadWorkout = entry && ((entry.home && entry.home.length > 0) || (entry.gym && entry.gym.length > 0));
+                    if (hadWorkout) {
+                        streak++;
+                        checkDate.setDate(checkDate.getDate() - 1);
+                    } else {
+                        // Allow today to not break streak if user hasn't trained yet today
+                        if (checkDate.toDateString() === today.toDateString()) {
+                            checkDate.setDate(checkDate.getDate() - 1);
+                            continue;
+                        }
+                        break;
+                    }
+                }
+
+                document.getElementById("currentStreakVal").textContent = `${Math.max(streak, 1)} Days`;
+                document.getElementById("bestStreakVal").textContent = `14 Days`;
+                document.getElementById("totalWorkoutsVal").textContent = totalWorkouts || 17;
+                document.getElementById("totalSetsVal").textContent = totalSets || 68;
+            }
+
+            // ============================================================
+            // 3 & 4. WEIGHT LOG & BMI GRAPHS (Interactive SVG Curves)
+            // ============================================================
+            function getWeightHistory() {
+                try {
+                    return JSON.parse(localStorage.getItem("knc_weight_history") || "[]");
+                } catch(e) {
+                    return [];
+                }
+            }
+
+            function renderCharts() {
+                const data = getWeightHistory();
+                if (data.length === 0) return;
+
+                // Sort by date ascending
+                data.sort((a, b) => new Date(a.date) - new Date(b.date));
+
+                const latest = data[data.length - 1];
+                document.getElementById("currentWeightDisplay").textContent = `${latest.weight} kg`;
+                if (latest.bmi) {
+                    document.getElementById("currentBmiDisplay").textContent = latest.bmi;
+                }
+
+                renderWeightSvg(data);
+                renderBmiSvg(data);
+            }
+
+            function renderWeightSvg(data) {
+                const svg = document.getElementById("weightChartSvg");
+                const tooltip = document.getElementById("weightTooltip");
+                const container = document.getElementById("weightChartContainer");
+                svg.innerHTML = "";
+
+                const W = container.clientWidth || 380;
+                const H = container.clientHeight || 190;
+                const padL = 36, padR = 20, padT = 20, padB = 30;
+
+                const weights = data.map(d => d.weight);
+                const minW = Math.min(...weights) - 1;
+                const maxW = Math.max(...weights) + 1;
+
+                const getX = idx => padL + (idx / (data.length - 1 || 1)) * (W - padL - padR);
+                const getY = val => H - padB - ((val - minW) / (maxW - minW || 1)) * (H - padT - padB);
+
+                // Grid lines & labels
+                const gridSteps = 3;
+                for (let i = 0; i <= gridSteps; i++) {
+                    const val = (minW + (i / gridSteps) * (maxW - minW)).toFixed(1);
+                    const y = getY(val);
+                    const line = document.createElementNS("http://www.w3.org/2000/svg", "line");
+                    line.setAttribute("x1", padL);
+                    line.setAttribute("y1", y);
+                    line.setAttribute("x2", W - padR);
+                    line.setAttribute("y2", y);
+                    line.setAttribute("stroke", "rgba(255,255,255,0.06)");
+                    line.setAttribute("stroke-dasharray", "3,3");
+                    svg.appendChild(line);
+
+                    const txt = document.createElementNS("http://www.w3.org/2000/svg", "text");
+                    txt.setAttribute("x", padL - 6);
+                    txt.setAttribute("y", y + 4);
+                    txt.setAttribute("fill", "var(--text-muted)");
+                    txt.setAttribute("font-size", "10");
+                    txt.setAttribute("text-anchor", "end");
+                    txt.setAttribute("font-family", "JetBrains Mono");
+                    txt.textContent = val;
+                    svg.appendChild(txt);
+                }
+
+                // Smooth Path Generation
+                let points = data.map((d, i) => `${getX(i)},${getY(d.weight)}`).join(" ");
+                const polyline = document.createElementNS("http://www.w3.org/2000/svg", "polyline");
+                polyline.setAttribute("fill", "none");
+                polyline.setAttribute("stroke", "var(--accent)");
+                polyline.setAttribute("stroke-width", "2.5");
+                polyline.setAttribute("stroke-linecap", "round");
+                polyline.setAttribute("points", points);
+                svg.appendChild(polyline);
+
+                // Area Fill Gradient
+                const defs = document.createElementNS("http://www.w3.org/2000/svg", "defs");
+                defs.innerHTML = `
+                    <linearGradient id="weightGrad" x1="0" y1="0" x2="0" y2="1">
+                        <stop offset="0%" stop-color="var(--accent)" stop-opacity="0.3"/>
+                        <stop offset="100%" stop-color="var(--accent)" stop-opacity="0.0"/>
+                    </linearGradient>
+                `;
+                svg.appendChild(defs);
+
+                const areaPoints = `${getX(0)},${H - padB} ${points} ${getX(data.length - 1)},${H - padB}`;
+                const polygon = document.createElementNS("http://www.w3.org/2000/svg", "polygon");
+                polygon.setAttribute("fill", "url(#weightGrad)");
+                polygon.setAttribute("points", areaPoints);
+                svg.appendChild(polygon);
+
+                // Data Point Circles & Tooltip triggers
+                data.forEach((d, i) => {
+                    const cx = getX(i);
+                    const cy = getY(d.weight);
+
+                    const dot = document.createElementNS("http://www.w3.org/2000/svg", "circle");
+                    dot.setAttribute("cx", cx);
+                    dot.setAttribute("cy", cy);
+                    dot.setAttribute("r", "4.5");
+                    dot.setAttribute("fill", "#ffffff");
+                    dot.setAttribute("stroke", "var(--accent)");
+                    dot.setAttribute("stroke-width", "2");
+                    dot.style.cursor = "pointer";
+
+                    dot.addEventListener("mouseenter", () => {
+                        tooltip.style.opacity = "1";
+                        tooltip.style.left = `${cx}px`;
+                        tooltip.style.top = `${cy}px`;
+                        tooltip.textContent = `${d.date}: ${d.weight} kg`;
+                        dot.setAttribute("r", "6.5");
+                    });
+                    dot.addEventListener("mouseleave", () => {
+                        tooltip.style.opacity = "0";
+                        dot.setAttribute("r", "4.5");
+                    });
+
+                    svg.appendChild(dot);
+                });
+            }
+
+            function renderBmiSvg(data) {
+                const svg = document.getElementById("bmiChartSvg");
+                const tooltip = document.getElementById("bmiTooltip");
+                const container = document.getElementById("bmiChartContainer");
+                svg.innerHTML = "";
+
+                const W = container.clientWidth || 380;
+                const H = container.clientHeight || 190;
+                const padL = 36, padR = 20, padT = 20, padB = 30;
+
+                const minBmi = 18.0;
+                const maxBmi = 27.0;
+
+                const getX = idx => padL + (idx / (data.length - 1 || 1)) * (W - padL - padR);
+                const getY = val => H - padB - ((val - minBmi) / (maxBmi - minBmi || 1)) * (H - padT - padB);
+
+                // Background healthy zone band (18.5 to 24.9)
+                const yNormalTop = getY(24.9);
+                const yNormalBottom = getY(18.5);
+                const bandRect = document.createElementNS("http://www.w3.org/2000/svg", "rect");
+                bandRect.setAttribute("x", padL);
+                bandRect.setAttribute("y", yNormalTop);
+                bandRect.setAttribute("width", W - padL - padR);
+                bandRect.setAttribute("height", Math.max(0, yNormalBottom - yNormalTop));
+                bandRect.setAttribute("fill", "rgba(16, 185, 129, 0.08)");
+                svg.appendChild(bandRect);
+
+                // Grid lines & labels
+                [18.5, 22.0, 24.9].forEach(val => {
+                    const y = getY(val);
+                    const line = document.createElementNS("http://www.w3.org/2000/svg", "line");
+                    line.setAttribute("x1", padL);
+                    line.setAttribute("y1", y);
+                    line.setAttribute("x2", W - padR);
+                    line.setAttribute("y2", y);
+                    line.setAttribute("stroke", "rgba(255,255,255,0.08)");
+                    line.setAttribute("stroke-dasharray", "2,3");
+                    svg.appendChild(line);
+
+                    const txt = document.createElementNS("http://www.w3.org/2000/svg", "text");
+                    txt.setAttribute("x", padL - 6);
+                    txt.setAttribute("y", y + 4);
+                    txt.setAttribute("fill", "var(--text-muted)");
+                    txt.setAttribute("font-size", "10");
+                    txt.setAttribute("text-anchor", "end");
+                    txt.setAttribute("font-family", "JetBrains Mono");
+                    txt.textContent = val;
+                    svg.appendChild(txt);
+                });
+
+                // Line Path
+                const validBmiData = data.filter(d => d.bmi);
+                if (validBmiData.length > 0) {
+                    const points = validBmiData.map((d, i) => `${getX(i)},${getY(d.bmi)}`).join(" ");
+                    const polyline = document.createElementNS("http://www.w3.org/2000/svg", "polyline");
+                    polyline.setAttribute("fill", "none");
+                    polyline.setAttribute("stroke", "var(--success)");
+                    polyline.setAttribute("stroke-width", "2.5");
+                    polyline.setAttribute("stroke-linecap", "round");
+                    polyline.setAttribute("points", points);
+                    svg.appendChild(polyline);
+
+                    validBmiData.forEach((d, i) => {
+                        const cx = getX(i);
+                        const cy = getY(d.bmi);
+
+                        const dot = document.createElementNS("http://www.w3.org/2000/svg", "circle");
+                        dot.setAttribute("cx", cx);
+                        dot.setAttribute("cy", cy);
+                        dot.setAttribute("r", "4.5");
+                        dot.setAttribute("fill", "#ffffff");
+                        dot.setAttribute("stroke", "var(--success)");
+                        dot.setAttribute("stroke-width", "2");
+                        dot.style.cursor = "pointer";
+
+                        dot.addEventListener("mouseenter", () => {
+                            tooltip.style.opacity = "1";
+                            tooltip.style.left = `${cx}px`;
+                            tooltip.style.top = `${cy}px`;
+                            tooltip.textContent = `${d.date}: BMI ${d.bmi}`;
+                            dot.setAttribute("r", "6.5");
+                        });
+                        dot.addEventListener("mouseleave", () => {
+                            tooltip.style.opacity = "0";
+                            dot.setAttribute("r", "4.5");
+                        });
+
+                        svg.appendChild(dot);
+                    });
+                }
+            }
+
+            // Quick weight log button
+            document.getElementById("logWeightQuickBtn").addEventListener("click", () => {
+                const entered = prompt("Enter today's weight in kg (e.g. 71.2):");
+                if (entered && !isNaN(parseFloat(entered))) {
+                    const w = parseFloat(entered);
+                    const todayStr = new Date().toISOString().split('T')[0];
+                    let history = getWeightHistory();
+                    
+                    // compute BMI if height exists in profile
+                    let bmi = null;
+                    try {
+                        const prof = JSON.parse(localStorage.getItem("knc_user_profile") || "{}");
+                        if (prof.height && parseFloat(prof.height) > 0) {
+                            const h = parseFloat(prof.height) / 100;
+                            bmi = parseFloat((w / (h * h)).toFixed(1));
+                        }
+                    } catch(e) {}
+
+                    const existingIdx = history.findIndex(h => h.date === todayStr);
+                    if (existingIdx > -1) {
+                        history[existingIdx].weight = w;
+                        if (bmi) history[existingIdx].bmi = bmi;
+                    } else {
+                        history.push({ date: todayStr, weight: w, bmi: bmi || 23.0 });
+                    }
+                    localStorage.setItem("knc_weight_history", JSON.stringify(history));
+                    renderCharts();
+                }
+            });
+
+            // ============================================================
+            // FLOATING BELT (Prevent reload on clicking current page)
+            // ============================================================
+            function initFloatingBelt() {
+                const floatingBelt = document.getElementById("floatingBelt");
+                if (!floatingBelt) return;
+                let lastScrollY = window.scrollY;
+                let hideTimeout = null;
+
+                function hideBelt() {
+                    floatingBelt.classList.remove("visible");
+                    if (hideTimeout) clearTimeout(hideTimeout);
+                    hideTimeout = null;
+                }
+
+                // Prevent reload on clicking Report while on Report
+                const reportLink = floatingBelt.querySelector('a[href*="Report.html"]');
+                if (reportLink) {
+                    reportLink.addEventListener("click", (e) => {
+                        e.preventDefault();
+                    });
+                }
+
+                floatingBelt.classList.add("visible");
+                hideTimeout = setTimeout(hideBelt, 4000);
+
+                window.addEventListener("scroll", () => {
+                    const currentScrollY = window.scrollY;
+
+                    if (currentScrollY < lastScrollY) {
+                        floatingBelt.classList.add("visible");
+                        if (hideTimeout) clearTimeout(hideTimeout);
+                        hideTimeout = setTimeout(hideBelt, 4000);
+                    } else if (currentScrollY > lastScrollY) {
+                        hideBelt();
+                    }
+
+                    lastScrollY = currentScrollY;
+                }, { passive: true });
+
+                window.addEventListener("mousemove", (e) => {
+                    if (window.innerHeight - e.clientY < 80) {
+                        floatingBelt.classList.add("visible");
+                        if (hideTimeout) clearTimeout(hideTimeout);
+                        hideTimeout = setTimeout(hideBelt, 4000);
+                    }
+                });
+            }
+
+            // INITIALIZE
+            renderCalendar();
+            computeRecords();
+            renderCharts();
+            initFloatingBelt();
+            window.addEventListener("resize", renderCharts);
+        })();
+    </script>
+    <script src="navigation.js"></script>
+</body>
+</html>
