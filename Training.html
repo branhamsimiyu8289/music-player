@@ -110,12 +110,11 @@
             color: var(--text-primary);
             display: flex;
             justify-content: center;
-            padding: 28px 16px 110px 16px; /* Extra bottom padding for floating belt */
+            padding: 28px 16px 140px 16px; /* Extra bottom padding for floating belt + mini player */
             overflow-x: hidden;
             position: relative;
         }
 
-        /* Ambient glow orbs */
         body::before, body::after {
             content: '';
             position: fixed;
@@ -429,6 +428,47 @@
             box-shadow: 0 2px 10px var(--accent-glow);
         }
 
+        /* Controls actions */
+        .home-actions-group {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+
+        .action-pill-btn {
+            background: transparent;
+            border: 1px solid var(--card-border);
+            color: var(--text-secondary);
+            font-size: 0.76rem;
+            font-weight: 700;
+            padding: 7px 12px;
+            border-radius: 10px;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            transition: all 0.2s ease;
+        }
+        .action-pill-btn:hover {
+            color: var(--text-primary);
+            border-color: var(--accent);
+            background: var(--card-hover);
+        }
+        .action-pill-btn svg {
+            width: 13px;
+            height: 13px;
+        }
+        .action-pill-btn.primary {
+            background: rgba(var(--accent-rgb), 0.15);
+            color: var(--accent);
+            border-color: rgba(var(--accent-rgb), 0.35);
+        }
+        .action-pill-btn.primary:hover {
+            background: var(--accent);
+            color: #ffffff;
+        }
+
         /* Summary Strip */
         .daily-meta-strip {
             display: flex;
@@ -446,28 +486,6 @@
             display: flex;
             align-items: center;
             gap: 8px;
-        }
-        .shuffle-btn {
-            background: transparent;
-            border: 1px solid var(--card-border);
-            color: var(--text-secondary);
-            font-size: 0.76rem;
-            font-weight: 700;
-            padding: 6px 12px;
-            border-radius: 8px;
-            cursor: pointer;
-            display: inline-flex;
-            align-items: center;
-            gap: 6px;
-            transition: all 0.2s ease;
-        }
-        .shuffle-btn:hover {
-            color: var(--text-primary);
-            border-color: var(--accent);
-        }
-        .shuffle-btn svg {
-            width: 13px;
-            height: 13px;
         }
 
         /* SECTION HEADER TAGS IN LIST */
@@ -546,42 +564,86 @@
             background: rgba(14, 165, 233, 0.15);
             color: var(--info);
         }
+        .exercise-type-tag.custom {
+            background: rgba(168, 85, 247, 0.15);
+            color: #c084fc;
+        }
 
-        /* Checkbox */
+        /* High-Contrast Visibility Checkbox across all themes */
         .checkbox-label {
             display: inline-flex;
             align-items: center;
             cursor: pointer;
             user-select: none;
+            padding: 2px;
         }
         .custom-checkbox {
-            width: 22px;
-            height: 22px;
-            border-radius: 6px;
-            border: 2px solid var(--card-border);
-            background: transparent;
+            width: 24px;
+            height: 24px;
+            border-radius: 7px;
+            border: 2px solid rgba(255, 255, 255, 0.45);
+            background: rgba(0, 0, 0, 0.35);
             display: flex;
             align-items: center;
             justify-content: center;
-            transition: all 0.2s ease;
+            transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
             cursor: pointer;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
+        }
+        .custom-checkbox:hover {
+            border-color: var(--accent);
+            background: rgba(255, 255, 255, 0.1);
+            box-shadow: 0 0 10px var(--accent-glow);
+            transform: scale(1.08);
         }
         .custom-checkbox svg {
-            width: 14px;
-            height: 14px;
-            stroke-width: 3;
+            width: 15px;
+            height: 15px;
+            stroke-width: 3.2;
             color: transparent;
-            transition: color 0.15s ease;
+            transition: color 0.15s ease, transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
+            transform: scale(0.6);
         }
         .exercise-card.completed .custom-checkbox,
         .custom-checkbox.checked {
-            background: var(--success);
-            border-color: var(--success);
-            box-shadow: 0 0 10px rgba(16, 185, 129, 0.4);
+            background: var(--success, #10b981) !important;
+            border-color: var(--success, #10b981) !important;
+            box-shadow: 0 0 12px rgba(16, 185, 129, 0.55) !important;
         }
         .exercise-card.completed .custom-checkbox svg,
         .custom-checkbox.checked svg {
-            color: #ffffff;
+            color: #ffffff !important;
+            stroke: #ffffff !important;
+            transform: scale(1);
+        }
+
+        /* Light theme high-contrast support */
+        [data-theme="light"] .custom-checkbox {
+            border: 2px solid #475569;
+            background: #ffffff;
+            box-shadow: 0 1px 4px rgba(0, 0, 0, 0.15);
+        }
+        [data-theme="light"] .custom-checkbox:hover {
+            border-color: var(--accent);
+            background: #f8fafc;
+        }
+
+        /* Cyberpunk neon theme support */
+        [data-theme="cyberpunk"] .custom-checkbox {
+            border: 2px solid rgba(244, 63, 94, 0.7);
+            background: rgba(20, 5, 25, 0.6);
+        }
+
+        /* Emerald theme support */
+        [data-theme="emerald"] .custom-checkbox {
+            border: 2px solid rgba(16, 185, 129, 0.7);
+            background: rgba(2, 44, 34, 0.6);
+        }
+
+        /* Sunset theme support */
+        [data-theme="sunset"] .custom-checkbox {
+            border: 2px solid rgba(249, 115, 22, 0.7);
+            background: rgba(31, 13, 61, 0.6);
         }
 
         .exercise-title {
@@ -624,12 +686,21 @@
         }
 
         /* Single Body Part Tabs (One at a time) */
+        .body-parts-tabs-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
         .body-parts-tabs {
             display: flex;
             gap: 8px;
             overflow-x: auto;
             padding-bottom: 6px;
             scrollbar-width: thin;
+            flex: 1;
+            min-width: 0;
         }
         .body-parts-tabs::-webkit-scrollbar {
             height: 4px;
@@ -690,6 +761,9 @@
             font-weight: 800;
             color: var(--text-primary);
             margin-bottom: 3px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
         }
         .catalog-meta {
             font-size: 0.74rem;
@@ -765,6 +839,19 @@
             color: var(--success);
             border: 1px solid rgba(16, 185, 129, 0.3);
             box-shadow: none;
+        }
+        .delete-custom-btn {
+            background: transparent;
+            border: none;
+            color: var(--text-muted);
+            cursor: pointer;
+            font-size: 0.95rem;
+            padding: 4px;
+            border-radius: 6px;
+            transition: color 0.15s ease;
+        }
+        .delete-custom-btn:hover {
+            color: var(--danger);
         }
 
         /* BOTTOM SELECTION & DONE BAR */
@@ -913,13 +1000,12 @@
             color: var(--info);
         }
 
-        /* Sets row in plan */
         .plan-sets-row {
             display: flex;
             align-items: center;
             gap: 6px;
             flex-wrap: wrap;
-            padding-left: 34px; /* Align with title beside checkbox */
+            padding-left: 34px;
         }
         .set-chip-check {
             font-family: 'JetBrains Mono', monospace;
@@ -948,7 +1034,217 @@
         }
 
         /* ------------------------------------------------------------- */
-        /* FLOATING BELT COMPONENT (Identical across pages except Profile)*/
+        /* EMBEDDED MINI-PLAYER COMPONENT                                */
+        /* ------------------------------------------------------------- */
+        .workout-mini-player {
+            position: sticky;
+            bottom: 78px;
+            z-index: 105;
+            width: 100%;
+            background: var(--surface-raised);
+            backdrop-filter: blur(24px);
+            -webkit-backdrop-filter: blur(24px);
+            border: 1px solid var(--card-border);
+            border-radius: var(--radius-lg);
+            padding: 10px 16px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5), 0 0 15px var(--accent-glow-subtle);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
+            margin-top: 10px;
+            transition: all 0.25s ease;
+        }
+        .mini-player-left {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            flex: 1;
+            min-width: 0;
+        }
+        .mini-player-cover {
+            width: 40px;
+            height: 40px;
+            border-radius: 10px;
+            background: var(--surface-inset);
+            overflow: hidden;
+            flex-shrink: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 1px solid var(--card-border);
+            position: relative;
+        }
+        .mini-player-cover img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        .mini-player-titles {
+            min-width: 0;
+            flex: 1;
+        }
+        .mini-player-title {
+            font-size: 0.86rem;
+            font-weight: 800;
+            color: var(--text-primary);
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        .mini-player-artist {
+            font-size: 0.72rem;
+            color: var(--text-secondary);
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+        .mini-visualizer-bars {
+            display: flex;
+            align-items: flex-end;
+            gap: 2px;
+            height: 12px;
+        }
+        .mini-bar {
+            width: 2.5px;
+            height: 3px;
+            background: var(--accent);
+            border-radius: 2px;
+            transition: height 0.15s ease;
+        }
+        .mini-bar.playing {
+            animation: bounceBar 0.6s infinite ease-in-out alternate;
+        }
+        .mini-bar:nth-child(2) { animation-delay: 0.15s; }
+        .mini-bar:nth-child(3) { animation-delay: 0.3s; }
+        .mini-bar:nth-child(4) { animation-delay: 0.45s; }
+        @keyframes bounceBar {
+            0% { height: 3px; }
+            100% { height: 12px; }
+        }
+        .mini-player-controls {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            flex-shrink: 0;
+        }
+        .mini-btn {
+            background: transparent;
+            border: none;
+            color: var(--text-primary);
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+        .mini-btn:hover {
+            background: var(--card-hover);
+            color: var(--accent);
+        }
+        .mini-btn.play-pause {
+            background: var(--accent);
+            color: #ffffff;
+            box-shadow: 0 0 12px var(--accent-glow);
+        }
+        .mini-btn.play-pause:hover {
+            background: var(--accent-hover);
+            transform: scale(1.06);
+        }
+        .mini-btn svg {
+            width: 16px;
+            height: 16px;
+        }
+
+        /* ------------------------------------------------------------- */
+        /* CUSTOM EXERCISE CREATOR MODAL                                 */
+        /* ------------------------------------------------------------- */
+        .modal-backdrop-custom {
+            position: fixed;
+            inset: 0;
+            z-index: 150;
+            background: rgba(0, 0, 0, 0.75);
+            backdrop-filter: blur(8px);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            padding: 16px;
+        }
+        .modal-backdrop-custom.open {
+            display: flex;
+        }
+        .custom-card-modal {
+            background: var(--surface-raised);
+            border: 1px solid var(--card-border);
+            border-radius: var(--radius-xl);
+            width: 100%;
+            max-width: 460px;
+            padding: 22px;
+            box-shadow: var(--shadow-main);
+            display: flex;
+            flex-direction: column;
+            gap: 14px;
+            animation: fadeIn 0.25s ease;
+        }
+        .modal-field {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+        .modal-label {
+            font-size: 0.76rem;
+            font-weight: 700;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+            letter-spacing: 0.04em;
+        }
+        .modal-input, .modal-select {
+            background: var(--surface-inset);
+            border: 1px solid var(--card-border);
+            border-radius: var(--radius-md);
+            padding: 10px 14px;
+            color: var(--text-primary);
+            font-size: 0.88rem;
+            outline: none;
+        }
+        .modal-input:focus, .modal-select:focus {
+            border-color: var(--accent);
+            box-shadow: 0 0 0 2px var(--accent-glow-subtle);
+        }
+        .modal-actions {
+            display: flex;
+            align-items: center;
+            justify-content: flex-end;
+            gap: 10px;
+            margin-top: 8px;
+        }
+        .btn-modal {
+            padding: 10px 18px;
+            border-radius: 10px;
+            font-size: 0.84rem;
+            font-weight: 700;
+            cursor: pointer;
+            border: none;
+            transition: all 0.2s ease;
+        }
+        .btn-modal.cancel {
+            background: var(--surface-inset);
+            color: var(--text-secondary);
+        }
+        .btn-modal.submit {
+            background: var(--accent);
+            color: #ffffff;
+            box-shadow: 0 2px 10px var(--accent-glow);
+        }
+
+        /* ------------------------------------------------------------- */
+        /* FLOATING BELT COMPONENT                                       */
         /* ------------------------------------------------------------- */
         .floating-belt {
             position: fixed;
@@ -1118,7 +1414,7 @@
                 </div>
             </div>
 
-            <!-- CONTROLS: LEVEL PILLS (Without INTENSITY label) & SHUFFLE -->
+            <!-- CONTROLS: LEVEL PILLS & ACTIONS -->
             <div class="home-controls-row">
                 <div class="level-pills" role="radiogroup" aria-label="Workout Level">
                     <button type="button" class="level-pill" data-level="beginner">Beginner</button>
@@ -1126,20 +1422,25 @@
                     <button type="button" class="level-pill" data-level="advanced">Advanced</button>
                 </div>
 
-                <button type="button" class="shuffle-btn" id="regenerateDailyBtn" title="Shuffle today's mix">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
-                        <polyline points="23 4 23 10 17 10"></polyline>
-                        <polyline points="1 20 1 14 7 14"></polyline>
-                        <path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"></path>
-                    </svg>
-                    <span>Shuffle Today's Mix</span>
-                </button>
+                <div class="home-actions-group">
+                    <button type="button" class="action-pill-btn primary" id="openCustomExerciseHomeBtn">
+                        <span>+ Custom Exercise</span>
+                    </button>
+                    <button type="button" class="action-pill-btn" id="regenerateDailyBtn" title="Shuffle today's mix">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                            <polyline points="23 4 23 10 17 10"></polyline>
+                            <polyline points="1 20 1 14 7 14"></polyline>
+                            <path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"></path>
+                        </svg>
+                        <span>Shuffle Mix</span>
+                    </button>
+                </div>
             </div>
 
             <!-- DAILY PROGRESS STRIP -->
             <div class="daily-meta-strip">
                 <div class="meta-strip-left">
-                    <span>10 Total Workouts: 2 Warm-Ups • 6 Main • 2 Warm-Downs</span>
+                    <span>10 Workouts: 2 Warm-Ups • 6 Main • 2 Warm-Downs</span>
                 </div>
                 <div class="header-date-badge" id="completionCounter">0 / 10 Done</div>
             </div>
@@ -1170,17 +1471,22 @@
                             <p style="font-size: 0.78rem; color: var(--text-secondary);">Select a muscle group, configure sets (10 reps each), and tap Done</p>
                         </div>
                     </div>
+                    <button type="button" class="action-pill-btn primary" id="openCustomExerciseGymBtn">
+                        <span>+ Custom Exercise</span>
+                    </button>
                 </div>
 
                 <!-- SINGLE BODY PART SELECTION (One at a time) -->
-                <div class="body-parts-tabs" id="bodyPartsTabs" role="tablist" aria-label="Body parts">
-                    <button type="button" class="body-part-tab active" data-part="chest" role="tab" aria-selected="true">🦾 Chest</button>
-                    <button type="button" class="body-part-tab" data-part="back" role="tab" aria-selected="false">🎒 Back</button>
-                    <button type="button" class="body-part-tab" data-part="shoulders" role="tab" aria-selected="false">🎯 Shoulders</button>
-                    <button type="button" class="body-part-tab" data-part="biceps" role="tab" aria-selected="false">💪 Biceps</button>
-                    <button type="button" class="body-part-tab" data-part="triceps" role="tab" aria-selected="false">⚡ Triceps</button>
-                    <button type="button" class="body-part-tab" data-part="legs" role="tab" aria-selected="false">🦵 Legs</button>
-                    <button type="button" class="body-part-tab" data-part="abs" role="tab" aria-selected="false">🧱 Abs</button>
+                <div class="body-parts-tabs-row">
+                    <div class="body-parts-tabs" id="bodyPartsTabs" role="tablist" aria-label="Body parts">
+                        <button type="button" class="body-part-tab active" data-part="chest" role="tab" aria-selected="true">🦾 Chest</button>
+                        <button type="button" class="body-part-tab" data-part="back" role="tab" aria-selected="false">🎒 Back</button>
+                        <button type="button" class="body-part-tab" data-part="shoulders" role="tab" aria-selected="false">🎯 Shoulders</button>
+                        <button type="button" class="body-part-tab" data-part="biceps" role="tab" aria-selected="false">💪 Biceps</button>
+                        <button type="button" class="body-part-tab" data-part="triceps" role="tab" aria-selected="false">⚡ Triceps</button>
+                        <button type="button" class="body-part-tab" data-part="legs" role="tab" aria-selected="false">🦵 Legs</button>
+                        <button type="button" class="body-part-tab" data-part="abs" role="tab" aria-selected="false">🧱 Abs</button>
+                    </div>
                 </div>
 
                 <!-- EXERCISE CATALOG FOR SELECTED BODY PART -->
@@ -1217,11 +1523,98 @@
 
         </section>
 
+        <!-- ========================================================= -->
+        <!-- EMBEDDED MINI-PLAYER (Plays KnC Music / Workout Beats)     -->
+        <!-- ========================================================= -->
+        <div class="workout-mini-player" id="workoutMiniPlayer" aria-label="Workout Music Controller">
+            <div class="mini-player-left">
+                <div class="mini-player-cover" id="miniPlayerCover">
+                    <img id="miniCoverImg" src="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' fill='%236366f1'/><circle cx='50' cy='50' r='35' fill='%23111827'/><polygon points='45,35 65,50 45,65' fill='%23ffffff'/></svg>" alt="Track Cover">
+                </div>
+                <div class="mini-player-titles">
+                    <div class="mini-player-title" id="miniPlayerTitle">KnC Workout Rhythm</div>
+                    <div class="mini-player-artist">
+                        <span id="miniPlayerArtist">High-Tempo Energy Beat</span>
+                        <div class="mini-visualizer-bars" id="miniVizBars">
+                            <span class="mini-bar"></span>
+                            <span class="mini-bar"></span>
+                            <span class="mini-bar"></span>
+                            <span class="mini-bar"></span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="mini-player-controls">
+                <button type="button" class="mini-btn" id="miniPrevBtn" title="Previous Track">
+                    <svg viewBox="0 0 24 24" fill="currentColor"><path d="M6 6h2v12H6zm3.5 6l8.5 6V6z"/></svg>
+                </button>
+                <button type="button" class="mini-btn play-pause" id="miniPlayBtn" title="Play Workout Beat">
+                    <svg id="miniPlayIcon" viewBox="0 0 24 24" fill="currentColor"><polygon points="5 3 19 12 5 21 5 3"></polygon></svg>
+                </button>
+                <button type="button" class="mini-btn" id="miniNextBtn" title="Next Track">
+                    <svg viewBox="0 0 24 24" fill="currentColor"><path d="M6 18l8.5-6L6 6v12zM16 6v12h2V6h-2z"/></svg>
+                </button>
+                <button type="button" class="mini-btn" id="miniMuteBtn" title="Mute/Unmute">
+                    <svg id="miniVolumeIcon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon><path d="M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07"></path></svg>
+                </button>
+            </div>
+            <audio id="miniNativeAudio" preload="auto"></audio>
+        </div>
+
     </main>
+
+    <!-- CUSTOM EXERCISE MODAL DIALOG -->
+    <div class="modal-backdrop-custom" id="customExerciseModal" role="dialog" aria-modal="true" aria-labelledby="customExHeading">
+        <div class="custom-card-modal">
+            <h3 id="customExHeading" style="font-size: 1.1rem; font-weight: 800;">Create Custom Exercise</h3>
+            
+            <div class="modal-field">
+                <label class="modal-label" for="customExName">Exercise Name</label>
+                <input type="text" id="customExName" class="modal-input" placeholder="e.g. Incline Cable Curls, Weighted Dips" maxlength="50">
+            </div>
+
+            <div class="modal-field">
+                <label class="modal-label" for="customExType">Workout Mode</label>
+                <select id="customExType" class="modal-select">
+                    <option value="gym">Gym Workout</option>
+                    <option value="home">Home Workout</option>
+                </select>
+            </div>
+
+            <div class="modal-field" id="customBodyPartField">
+                <label class="modal-label" for="customExBodyPart">Body Part / Category</label>
+                <select id="customExBodyPart" class="modal-select">
+                    <option value="chest">Chest</option>
+                    <option value="back">Back</option>
+                    <option value="shoulders">Shoulders</option>
+                    <option value="biceps">Biceps</option>
+                    <option value="triceps">Triceps</option>
+                    <option value="legs">Legs</option>
+                    <option value="abs">Abs</option>
+                </select>
+            </div>
+
+            <div class="modal-field">
+                <label class="modal-label" for="customExEquip">Equipment</label>
+                <input type="text" id="customExEquip" class="modal-input" placeholder="e.g. Cables, Dumbbells, Bodyweight" maxlength="40">
+            </div>
+
+            <div class="modal-field">
+                <label class="modal-label" for="customExSets">Default Sets (10 Reps Each)</label>
+                <input type="number" id="customExSets" class="modal-input" min="1" max="8" value="3">
+            </div>
+
+            <div class="modal-actions">
+                <button type="button" class="btn-modal cancel" id="cancelCustomExBtn">Cancel</button>
+                <button type="button" class="btn-modal submit" id="saveCustomExBtn">Save Exercise</button>
+            </div>
+        </div>
+    </div>
 
     <!-- FLOATING BELT (Quick Access Navigation Across All Pages except Profile) -->
     <nav class="floating-belt" id="floatingBelt" aria-label="Quick access">
-        <a class="floating-belt-item" href="index.html" aria-label="Music" title="Music">
+        <a class="floating-belt-item" href="Music%20Player.html" aria-label="Music" title="Music">
             <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3v10.55c-.59-.34-1.27-.55-2-.55-2.21 0-4 1.79-4 4s1.79 4 4 4 4-1.79 4-4V7h4V3h-6z"/></svg>
             <span>Music</span>
         </a>
@@ -1365,7 +1758,7 @@
             };
 
             // ============================================================
-            // 2. GYM WORKOUT CATALOG (Specific single body parts, 10 reps)
+            // 2. GYM WORKOUT CATALOG
             // ============================================================
             const GYM_CATALOG = {
                 chest: [
@@ -1423,7 +1816,7 @@
                 ]
             };
 
-            // Automated Gym Warm-ups & Warm-downs (2 of each generated on Done)
+            // Automated Gym Warm-ups & Warm-downs
             const GYM_AUTO_WARMUPS = [
                 { id: "g_warm_1", name: "Dynamic Arm & Shoulder Circles", type: "warmup", meta: "3 mins dynamic joint lubrication" },
                 { id: "g_warm_2", name: "Light Torso Twists & Jumping Jacks", type: "warmup", meta: "2 mins light cardiovascular ramp-up" }
@@ -1434,7 +1827,7 @@
             ];
 
             // ============================================================
-            // STATE
+            // STATE & CUSTOM EXERCISES
             // ============================================================
             let currentMode = "home"; // 'home' | 'gym'
             let homeEquipment = "no_equipment"; // 'no_equipment' | 'with_equipment'
@@ -1445,8 +1838,30 @@
             // Gym state
             let activeGymPart = "chest"; // Single chosen body part at a time
             let selectedGymWorkouts = []; // Array of { id, name, bodyPart, sets, reps: 10 }
-            let completedGymWorkouts = new Set(); // Set of completed workout IDs in plan
-            let completedGymSetKeys = new Set(); // Set of "workoutId_setNum"
+            let completedGymWorkouts = new Set();
+            let completedGymSetKeys = new Set();
+
+            // Load Custom Exercises
+            const STORAGE_CUSTOM_EXERCISES = "knc_custom_exercises";
+            function getCustomExercises() {
+                try {
+                    return JSON.parse(localStorage.getItem(STORAGE_CUSTOM_EXERCISES) || "[]");
+                } catch (e) {
+                    return [];
+                }
+            }
+
+            function saveCustomExercise(exercise) {
+                const list = getCustomExercises();
+                list.push(exercise);
+                localStorage.setItem(STORAGE_CUSTOM_EXERCISES, JSON.stringify(list));
+            }
+
+            function removeCustomExercise(id) {
+                let list = getCustomExercises();
+                list = list.filter(item => item.id !== id);
+                localStorage.setItem(STORAGE_CUSTOM_EXERCISES, JSON.stringify(list));
+            }
 
             function getTodayDateString() {
                 const d = new Date();
@@ -1483,13 +1898,11 @@
                 const savedPlan = localStorage.getItem(STORAGE_GYM_PLAN);
                 if (savedPlan) {
                     const parsed = JSON.parse(savedPlan);
-                    // Check if saved routine is from today; if not (past midnight), it resets to blank
                     if (parsed.date === getTodayDateString()) {
                         if (Array.isArray(parsed.selected)) selectedGymWorkouts = parsed.selected;
                         if (Array.isArray(parsed.doneWorkouts)) completedGymWorkouts = new Set(parsed.doneWorkouts);
                         if (Array.isArray(parsed.doneSets)) completedGymSetKeys = new Set(parsed.doneSets);
                     } else {
-                        // Date is before today -> reset to blank
                         selectedGymWorkouts = [];
                         completedGymWorkouts = new Set();
                         completedGymSetKeys = new Set();
@@ -1514,7 +1927,7 @@
                 } catch (e) {}
             }
 
-            // Midnight checker interval (resets routine if midnight passes while tab is open)
+            // Midnight checker
             setInterval(() => {
                 const todayStr = getTodayDateString();
                 const savedPlan = localStorage.getItem(STORAGE_GYM_PLAN);
@@ -1566,6 +1979,23 @@
                     list.push({ id: `hw_main_${cat}_${cIdx}`, type: "main", ...cPool[cIdx] });
                 });
 
+                // Invert with any custom home exercises if present
+                const customHome = getCustomExercises().filter(e => e.type === "home");
+                customHome.forEach((cEx, cIdx) => {
+                    if (list.length >= 6) {
+                        list[2 + (cIdx % 6)] = {
+                            id: cEx.id,
+                            type: "custom",
+                            name: cEx.name,
+                            muscle: cEx.bodyPart || "Custom",
+                            desc: cEx.desc || "Custom exercise routine",
+                            beginner: `${cEx.sets || 3} sets × 10 reps`,
+                            intermediate: `${cEx.sets || 4} sets × 12 reps`,
+                            advanced: `${cEx.sets || 5} sets × 15 reps`
+                        };
+                    }
+                });
+
                 // 3. Two Warm-downs
                 const cdPool = pool.warmdowns;
                 const cd1Idx = (dayNum) % cdPool.length;
@@ -1583,7 +2013,7 @@
 
                 let doneCount = 0;
 
-                exercises.forEach((ex, idx) => {
+                exercises.forEach((ex) => {
                     const isDone = completedHomeIds.has(ex.id);
                     if (isDone) doneCount++;
 
@@ -1600,6 +2030,9 @@
                     } else if (ex.type === "warmdown") {
                         badgeClass += " warmdown";
                         badgeLabel = "Warm-Down";
+                    } else if (ex.type === "custom") {
+                        badgeClass += " custom";
+                        badgeLabel = "Custom";
                     }
 
                     card.innerHTML = `
@@ -1646,7 +2079,7 @@
             }
 
             // ============================================================
-            // GYM WORKOUT LOGIC (Single body part, 10 reps, Done / Edit views)
+            // GYM WORKOUT LOGIC (Catalog, Done View, Plan)
             // ============================================================
             const gymChoosingView = document.getElementById("gymChoosingView");
             const gymPlanView = document.getElementById("gymPlanView");
@@ -1663,22 +2096,29 @@
 
             function renderGymCatalog() {
                 gymCatalogList.innerHTML = "";
-                const list = GYM_CATALOG[activeGymPart] || [];
+                const baseList = GYM_CATALOG[activeGymPart] || [];
+                const customGym = getCustomExercises().filter(e => e.type === "gym" && e.bodyPart === activeGymPart);
 
-                list.forEach(ex => {
+                const fullList = [...baseList, ...customGym];
+
+                fullList.forEach(ex => {
                     const card = document.createElement("div");
                     card.className = "catalog-card";
 
                     const existing = selectedGymWorkouts.find(w => w.id === ex.id);
-                    let currentSets = existing ? existing.sets : ex.defaultSets;
+                    let currentSets = existing ? existing.sets : (ex.defaultSets || 3);
 
                     card.innerHTML = `
                         <div class="catalog-left">
-                            <div class="catalog-name">${ex.name}</div>
+                            <div class="catalog-name">
+                                <span>${ex.name}</span>
+                                ${ex.isCustom ? '<span style="font-size:0.62rem; padding:2px 6px; border-radius:4px; background:rgba(168,85,247,0.2); color:#c084fc; font-weight:800;">CUSTOM</span>' : ''}
+                            </div>
                             <div class="catalog-meta">
                                 <span>${ex.equipment}</span>
                                 <span>•</span>
                                 <span class="catalog-rep-pill">10 Reps</span>
+                                ${ex.isCustom ? `<button type="button" class="delete-custom-btn" data-delid="${ex.id}" title="Delete Custom Exercise">🗑️</button>` : ''}
                             </div>
                         </div>
                         <div class="catalog-actions">
@@ -1697,6 +2137,19 @@
                     const decBtn = card.querySelector(".dec-btn");
                     const incBtn = card.querySelector(".inc-btn");
                     const addBtn = card.querySelector(".add-workout-btn");
+                    const delBtn = card.querySelector(".delete-custom-btn");
+
+                    if (delBtn) {
+                        delBtn.addEventListener("click", () => {
+                            if (confirm(`Remove custom exercise "${ex.name}"?`)) {
+                                removeCustomExercise(ex.id);
+                                selectedGymWorkouts = selectedGymWorkouts.filter(w => w.id !== ex.id);
+                                saveGymState();
+                                renderGymCatalog();
+                                showToast("Custom exercise deleted");
+                            }
+                        });
+                    }
 
                     decBtn.addEventListener("click", () => {
                         if (currentSets > 1) {
@@ -1750,13 +2203,12 @@
                 updateSelectedCount();
             }
 
-            // Render the Workout Plan Page (Includes 2 Warm-ups, Selected Workouts, 2 Warm-downs)
             function renderGymPlan() {
                 planListWrapper.innerHTML = "";
                 let totalWorkouts = 2 + selectedGymWorkouts.length + 2;
                 let doneCount = 0;
 
-                // 1. WARM-UPS (2 items)
+                // 1. WARM-UPS
                 const warmupSep = document.createElement("div");
                 warmupSep.className = "section-separator";
                 warmupSep.textContent = "1. WARM-UP ROUTINE (2 EXERCISES)";
@@ -1769,7 +2221,7 @@
                     planListWrapper.appendChild(card);
                 });
 
-                // 2. SELECTED WORKOUTS (Each with 10 reps & chosen sets)
+                // 2. MAIN WORKOUTS
                 const mainSep = document.createElement("div");
                 mainSep.className = "section-separator";
                 mainSep.textContent = `2. MAIN WORKOUTS (${selectedGymWorkouts.length} EXERCISES • 10 REPS/SET)`;
@@ -1792,7 +2244,7 @@
                     });
                 }
 
-                // 3. WARM-DOWNS (2 items)
+                // 3. WARM-DOWNS
                 const coolSep = document.createElement("div");
                 coolSep.className = "section-separator";
                 coolSep.textContent = "3. WARM-DOWN & RECOVERY (2 EXERCISES)";
@@ -1849,7 +2301,7 @@
                     ${setsHtml}
                 `;
 
-                // Checkbox toggle for entire workout done
+                // Checkbox toggle
                 const chk = card.querySelector(".checkbox-label");
                 chk.addEventListener("click", (e) => {
                     e.stopPropagation();
@@ -1859,7 +2311,6 @@
                         completedGymWorkouts.add(id);
                         recordWorkoutLog("gym", name, { name: name, category: badgeText, sets: setCount || 1, reps: 10 });
                         playBeep(920, 0.14);
-                        // Also auto-mark all sets as done
                         if (hasSets) {
                             for (let s = 1; s <= setCount; s++) {
                                 completedGymSetKeys.add(`${id}_set${s}`);
@@ -1870,7 +2321,7 @@
                     renderGymPlan();
                 });
 
-                // Individual set button click
+                // Individual set button
                 card.querySelectorAll(".set-chip-check").forEach(btn => {
                     btn.addEventListener("click", () => {
                         const setKey = btn.getAttribute("data-setkey");
@@ -1902,7 +2353,7 @@
                 });
             });
 
-            // Done Button: switches from choosing view to workout plan view
+            // Done Button
             gymDoneBtn.addEventListener("click", () => {
                 if (selectedGymWorkouts.length === 0) {
                     showToast("Please add at least 1 workout first!");
@@ -1915,12 +2366,283 @@
                 playBeep(880, 0.2);
             });
 
-            // Edit Workout Button: returns from plan view to choosing view
+            // Edit Workout Button
             gymEditWorkoutBtn.addEventListener("click", () => {
                 gymPlanView.style.display = "none";
                 gymChoosingView.style.display = "flex";
                 renderGymCatalog();
                 window.scrollTo({ top: 0, behavior: "smooth" });
+            });
+
+            // ============================================================
+            // CUSTOM EXERCISE CREATOR MODAL LOGIC
+            // ============================================================
+            const customExerciseModal = document.getElementById("customExerciseModal");
+            const openCustomExerciseHomeBtn = document.getElementById("openCustomExerciseHomeBtn");
+            const openCustomExerciseGymBtn = document.getElementById("openCustomExerciseGymBtn");
+            const cancelCustomExBtn = document.getElementById("cancelCustomExBtn");
+            const saveCustomExBtn = document.getElementById("saveCustomExBtn");
+
+            const customExName = document.getElementById("customExName");
+            const customExType = document.getElementById("customExType");
+            const customExBodyPart = document.getElementById("customExBodyPart");
+            const customExEquip = document.getElementById("customExEquip");
+            const customExSets = document.getElementById("customExSets");
+
+            function openCustomModal(defaultType = "gym") {
+                customExType.value = defaultType;
+                customExName.value = "";
+                customExEquip.value = "";
+                customExSets.value = "3";
+                customExerciseModal.classList.add("open");
+                customExName.focus();
+            }
+
+            if (openCustomExerciseHomeBtn) {
+                openCustomExerciseHomeBtn.addEventListener("click", () => openCustomModal("home"));
+            }
+            if (openCustomExerciseGymBtn) {
+                openCustomExerciseGymBtn.addEventListener("click", () => openCustomModal("gym"));
+            }
+            if (cancelCustomExBtn) {
+                cancelCustomExBtn.addEventListener("click", () => customExerciseModal.classList.remove("open"));
+            }
+
+            if (saveCustomExBtn) {
+                saveCustomExBtn.addEventListener("click", () => {
+                    const name = customExName.value.trim();
+                    if (!name) {
+                        showToast("Please enter an exercise name");
+                        return;
+                    }
+
+                    const newEx = {
+                        id: `cust_${Date.now()}`,
+                        name: name,
+                        type: customExType.value,
+                        bodyPart: customExBodyPart.value,
+                        equipment: customExEquip.value.trim() || "Gym Equipment",
+                        defaultSets: parseInt(customExSets.value) || 3,
+                        isCustom: true
+                    };
+
+                    saveCustomExercise(newEx);
+                    customExerciseModal.classList.remove("open");
+                    showToast(`Custom exercise "${name}" created!`);
+
+                    if (newEx.type === "gym") {
+                        renderGymCatalog();
+                    } else {
+                        renderHomeWorkouts();
+                    }
+                });
+            }
+
+            // ============================================================
+            // EMBEDDED MINI-PLAYER (IndexedDB + Workout Audio Synthesizer)
+            // ============================================================
+            const miniPlayBtn = document.getElementById("miniPlayBtn");
+            const miniPlayIcon = document.getElementById("miniPlayIcon");
+            const miniPrevBtn = document.getElementById("miniPrevBtn");
+            const miniNextBtn = document.getElementById("miniNextBtn");
+            const miniMuteBtn = document.getElementById("miniMuteBtn");
+            const miniTitle = document.getElementById("miniPlayerTitle");
+            const miniArtist = document.getElementById("miniPlayerArtist");
+            const miniCoverImg = document.getElementById("miniCoverImg");
+            const miniNativeAudio = document.getElementById("miniNativeAudio");
+            const miniBars = document.querySelectorAll(".mini-bar");
+
+            let workoutTracks = [];
+            let currentMiniIndex = 0;
+            let isMiniPlaying = false;
+
+            // Built-in Synthesizer Beat Generator (Ensures music always plays even before user imports mp3s)
+            let synthInterval = null;
+            let synthAudioCtx = null;
+            let synthStep = 0;
+
+            function playSynthBeat(bpm = 128) {
+                try {
+                    const AudioCtx = window.AudioContext || window.webkitAudioContext;
+                    if (!synthAudioCtx) synthAudioCtx = new AudioCtx();
+                    if (synthAudioCtx.state === "suspended") synthAudioCtx.resume();
+
+                    const intervalMs = (60 / bpm / 4) * 1000; // 16th notes
+                    synthStep = 0;
+
+                    if (synthInterval) clearInterval(synthInterval);
+                    synthInterval = setInterval(() => {
+                        const t = synthAudioCtx.currentTime;
+
+                        // Kick on 1, 5, 9, 13 (every quarter note)
+                        if (synthStep % 4 === 0) {
+                            const osc = synthAudioCtx.createOscillator();
+                            const gain = synthAudioCtx.createGain();
+                            osc.frequency.setValueAtTime(140, t);
+                            osc.frequency.exponentialRampToValueAtTime(38, t + 0.12);
+                            gain.gain.setValueAtTime(0.35, t);
+                            gain.gain.exponentialRampToValueAtTime(0.001, t + 0.14);
+                            osc.connect(gain);
+                            gain.connect(synthAudioCtx.destination);
+                            osc.start(t);
+                            osc.stop(t + 0.15);
+                        }
+
+                        // Snare on 4, 12
+                        if (synthStep % 8 === 4) {
+                            const osc = synthAudioCtx.createOscillator();
+                            const gain = synthAudioCtx.createGain();
+                            osc.type = "triangle";
+                            osc.frequency.setValueAtTime(220, t);
+                            gain.gain.setValueAtTime(0.2, t);
+                            gain.gain.exponentialRampToValueAtTime(0.001, t + 0.1);
+                            osc.connect(gain);
+                            gain.connect(synthAudioCtx.destination);
+                            osc.start(t);
+                            osc.stop(t + 0.1);
+                        }
+
+                        // Hi-hat on offbeats
+                        if (synthStep % 2 === 1) {
+                            const osc = synthAudioCtx.createOscillator();
+                            const gain = synthAudioCtx.createGain();
+                            osc.type = "highpass";
+                            osc.frequency.setValueAtTime(8000, t);
+                            gain.gain.setValueAtTime(0.06, t);
+                            gain.gain.exponentialRampToValueAtTime(0.001, t + 0.04);
+                            osc.connect(gain);
+                            gain.connect(synthAudioCtx.destination);
+                            osc.start(t);
+                            osc.stop(t + 0.05);
+                        }
+
+                        synthStep = (synthStep + 1) % 16;
+                    }, intervalMs);
+                } catch (e) {}
+            }
+
+            function stopSynthBeat() {
+                if (synthInterval) {
+                    clearInterval(synthInterval);
+                    synthInterval = null;
+                }
+            }
+
+            // Load IndexedDB tracks from KnCMusicDB
+            async function loadIndexedDBTracks() {
+                return new Promise(resolve => {
+                    const request = indexedDB.open("KnCMusicDB", 1);
+                    request.onsuccess = (e) => {
+                        const db = e.target.result;
+                        if (!db.objectStoreNames.contains("tracks")) {
+                            resolve([]);
+                            return;
+                        }
+                        const tx = db.transaction("tracks", "readonly");
+                        const store = tx.objectStore("tracks");
+                        const getAll = store.getAll();
+                        getAll.onsuccess = () => resolve(getAll.result || []);
+                        getAll.onerror = () => resolve([]);
+                    };
+                    request.onerror = () => resolve([]);
+                });
+            }
+
+            async function initMiniPlayer() {
+                const dbTracks = await loadIndexedDBTracks();
+                
+                if (dbTracks && dbTracks.length > 0) {
+                    workoutTracks = dbTracks.map(t => ({
+                        name: t.name,
+                        artist: t.artist || "KnC Music Library",
+                        src: t.file ? URL.createObjectURL(t.file) : null,
+                        cover: t.cover || "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' fill='%236366f1'/><circle cx='50' cy='50' r='35' fill='%23111827'/></svg>",
+                        isSynth: false
+                    })).filter(t => t.src);
+                }
+
+                // If no user tracks in IndexedDB, provide motivating workout presets
+                if (workoutTracks.length === 0) {
+                    workoutTracks = [
+                        { name: "KnC High-Tempo Rhythm (128 BPM)", artist: "Workout Beat Generator", bpm: 128, isSynth: true },
+                        { name: "KnC Cardio Pulse & Kick (134 BPM)", artist: "Workout Beat Generator", bpm: 134, isSynth: true },
+                        { name: "KnC Cool-Down Ambient (95 BPM)", artist: "Workout Beat Generator", bpm: 95, isSynth: true }
+                    ];
+                }
+
+                updateMiniTrackUI();
+            }
+
+            function updateMiniTrackUI() {
+                if (workoutTracks.length === 0) return;
+                const track = workoutTracks[currentMiniIndex];
+                miniTitle.textContent = track.name;
+                miniArtist.textContent = track.artist;
+                if (track.cover) {
+                    miniCoverImg.src = track.cover;
+                }
+            }
+
+            function playMiniTrack() {
+                if (workoutTracks.length === 0) return;
+                const track = workoutTracks[currentMiniIndex];
+
+                if (track.isSynth) {
+                    playSynthBeat(track.bpm || 128);
+                } else if (track.src) {
+                    stopSynthBeat();
+                    miniNativeAudio.src = track.src;
+                    miniNativeAudio.play().catch(() => {});
+                }
+
+                isMiniPlaying = true;
+                miniPlayIcon.innerHTML = `<rect x="6" y="4" width="4" height="16"></rect><rect x="14" y="4" width="4" height="16"></rect>`;
+                miniBars.forEach(b => b.classList.add("playing"));
+            }
+
+            function pauseMiniTrack() {
+                stopSynthBeat();
+                miniNativeAudio.pause();
+                isMiniPlaying = false;
+                miniPlayIcon.innerHTML = `<polygon points="5 3 19 12 5 21 5 3"></polygon>`;
+                miniBars.forEach(b => b.classList.remove("playing"));
+            }
+
+            miniPlayBtn.addEventListener("click", () => {
+                if (isMiniPlaying) {
+                    pauseMiniTrack();
+                } else {
+                    playMiniTrack();
+                }
+            });
+
+            miniNextBtn.addEventListener("click", () => {
+                currentMiniIndex = (currentMiniIndex + 1) % workoutTracks.length;
+                updateMiniTrackUI();
+                if (isMiniPlaying) playMiniTrack();
+            });
+
+            miniPrevBtn.addEventListener("click", () => {
+                currentMiniIndex = (currentMiniIndex - 1 + workoutTracks.length) % workoutTracks.length;
+                updateMiniTrackUI();
+                if (isMiniPlaying) playMiniTrack();
+            });
+
+            let isMuted = false;
+            miniMuteBtn.addEventListener("click", () => {
+                isMuted = !isMuted;
+                miniNativeAudio.muted = isMuted;
+                if (synthAudioCtx) {
+                    if (isMuted) stopSynthBeat();
+                    else if (isMiniPlaying && workoutTracks[currentMiniIndex].isSynth) playSynthBeat(workoutTracks[currentMiniIndex].bpm);
+                }
+                showToast(isMuted ? "Audio muted" : "Audio unmuted");
+            });
+
+            miniNativeAudio.addEventListener("ended", () => {
+                currentMiniIndex = (currentMiniIndex + 1) % workoutTracks.length;
+                updateMiniTrackUI();
+                playMiniTrack();
             });
 
             // ============================================================
@@ -1949,12 +2671,10 @@
                 tabHome.setAttribute("aria-selected", "false");
                 homeView.style.display = "none";
                 gymView.style.display = "block";
-                
-                // Show choosing view if no plan active, or keep state
                 renderGymCatalog();
             });
 
-            // Home Sub-Columns: With vs Without Equipment
+            // Home Sub-Columns
             const btnNoEquip = document.getElementById("btnNoEquipment");
             const btnWithEquip = document.getElementById("btnWithEquipment");
 
@@ -1993,7 +2713,7 @@
             });
 
             // ============================================================
-            // FLOATING BELT BEHAVIOR (Same behavior as Music Player.html)
+            // FLOATING BELT BEHAVIOR
             // ============================================================
             function initFloatingBelt() {
                 const floatingBelt = document.getElementById("floatingBelt");
@@ -2014,7 +2734,6 @@
                     });
                 }
 
-                // Show on initial load for 4s
                 floatingBelt.classList.add("visible");
                 hideTimeout = setTimeout(hideBelt, 4000);
 
@@ -2044,11 +2763,14 @@
             // INITIALIZATION
             renderHomeWorkouts();
             renderGymCatalog();
+            initMiniPlayer();
             initFloatingBelt();
         })();
     </script>
 
     <!-- NAVIGATION CONTROLLER SCRIPT (Handles circular back button and browser history) -->
     <script src="navigation.js"></script>
+    <!-- CROSS-PAGE AUDIO SYNC & TOP-RIGHT FLOATING PILL -->
+    <script src="music-sync.js"></script>
 </body>
 </html>

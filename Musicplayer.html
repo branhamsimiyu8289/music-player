@@ -132,26 +132,27 @@
             box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
         }
 
+        /* STICKY LOWER BELT FOR NAVIGATION GLYPHS AT BOTTOM OF SCREEN FOR MUSIC PAGE ONLY */
         .floating-belt {
             position: fixed;
             left: 50%;
-            bottom: calc(16px + env(safe-area-inset-bottom, 0px));
+            bottom: calc(12px + env(safe-area-inset-bottom, 0px));
             z-index: 110;
             display: flex;
             align-items: center;
             justify-content: space-around;
-            width: min(540px, calc(100% - 32px));
-            min-height: 54px;
+            width: min(540px, calc(100% - 24px));
+            min-height: 52px;
             padding: 6px 12px;
             background: var(--card-bg);
-            backdrop-filter: blur(20px);
-            -webkit-backdrop-filter: blur(20px);
+            backdrop-filter: blur(24px);
+            -webkit-backdrop-filter: blur(24px);
             border: 1px solid var(--card-border);
             border-radius: var(--radius-lg);
-            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
-            opacity: 0;
-            pointer-events: none;
-            transform: translate(-50%, calc(100% + 24px));
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4), 0 0 1px 1px rgba(255, 255, 255, 0.05);
+            opacity: 1;
+            pointer-events: auto;
+            transform: translate(-50%, 0);
             transition: opacity 0.25s ease, transform 0.25s ease;
         }
 
@@ -190,6 +191,11 @@
 
         .floating-belt-item:first-child {
             color: var(--accent);
+        }
+
+        .floating-belt-item.active-page {
+            color: var(--accent);
+            cursor: default;
         }
 
         .nav-brand {
@@ -264,12 +270,12 @@
             fill: var(--accent);
         }
 
-        /* FLOATING DROPDOWN LIST MENU */
+        /* FLOATING DROPDOWN LIST MENU (EMOJIS ONLY) */
         .theme-menu {
             position: absolute;
             top: calc(100% + 8px);
             right: 0;
-            min-width: 205px;
+            min-width: 110px;
             background: rgba(17, 24, 39, 0.95);
             backdrop-filter: blur(24px);
             -webkit-backdrop-filter: blur(24px);
@@ -299,7 +305,7 @@
             background: transparent;
             border: 1px solid transparent;
             color: var(--text-primary);
-            padding: 8px 12px;
+            padding: 7px 10px;
             border-radius: var(--radius-sm);
             font-size: 0.82rem;
             font-weight: 600;
@@ -316,6 +322,11 @@
             display: flex;
             align-items: center;
             gap: 10px;
+        }
+
+        .theme-emoji {
+            font-size: 1.15rem;
+            line-height: 1;
         }
 
         .theme-swatch {
@@ -507,6 +518,38 @@
             display: flex;
             align-items: center;
             justify-content: center;
+            cursor: pointer;
+            z-index: 10;
+            transition: all 0.2s ease;
+        }
+
+        .cover-speed-btn {
+            position: absolute;
+            bottom: 4px;
+            left: 4px;
+            z-index: 10;
+            cursor: pointer;
+            font-size: 0.72rem;
+            font-weight: 700;
+            padding: 5px 10px;
+            background: rgba(0, 0, 0, 0.65);
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
+            border: 1px solid var(--card-border);
+            border-radius: 20px;
+            color: var(--text-primary);
+            transition: all 0.2s ease;
+            user-select: none;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .cover-speed-btn:hover {
+            background: var(--card-hover);
+            border-color: var(--accent);
+            transform: scale(1.06);
+            color: #ffffff;
+        }
             cursor: pointer;
             z-index: 3;
             transition: all 0.2s;
@@ -1336,36 +1379,112 @@
 
         @media (max-width: 600px) {
             body {
-                padding: 14px 10px;
+                padding: 10px 10px calc(66px + env(safe-area-inset-bottom, 0px));
+                min-height: 100vh;
+            }
+
+            .top-navbar {
+                margin-bottom: 8px;
+                padding: 0 4px;
+            }
+
+            .app-container {
+                gap: 8px;
+            }
+
+            .player-card {
+                padding: 12px 14px 10px;
+                border-radius: 18px;
+            }
+
+            .cover-visualizer-container {
+                width: 140px;
+                height: 140px;
+                margin: 0 auto 6px;
+            }
+
+            #visualizerCanvas {
+                width: 160px;
+                height: 160px;
+            }
+
+            .cover-wrapper {
+                width: 110px;
+                height: 110px;
+            }
+
+            .cover-speed-btn {
+                bottom: 2px;
+                left: 2px;
+                padding: 3px 8px;
+                font-size: 0.68rem;
+            }
+
+            .visualizer-toggle-btn {
+                bottom: 2px;
+                right: 2px;
+                width: 28px;
+                height: 28px;
+            }
+
+            .track-details {
+                margin-bottom: 6px;
+            }
+
+            .track-title {
+                font-size: 1.02rem;
+            }
+
+            .progress-container {
+                margin-bottom: 6px;
+            }
+
+            .controls {
+                gap: 10px;
+                margin-bottom: 6px;
+            }
+
+            .play-btn {
+                width: 44px;
+                height: 44px;
+            }
+
+            .control-btn svg {
+                width: 20px;
+                height: 20px;
+            }
+
+            .volume-container {
+                margin-top: 0;
+            }
+
+            .watch-card {
+                padding: 8px 14px;
+                border-radius: 16px;
+            }
+
+            .watch-header {
+                font-size: 0.66rem;
+            }
+
+            .clock-time {
+                font-size: 1.2rem;
+                margin: 2px 0;
+            }
+
+            .clock-date {
+                font-size: 0.68rem;
             }
 
             .floating-belt {
                 width: calc(100% - 20px);
-            }
-
-            .player-card {
-                padding: 20px 16px;
-            }
-
-            .cover-visualizer-container {
-                width: 200px;
-                height: 200px;
-            }
-
-            #visualizerCanvas {
-                width: 220px;
-                height: 220px;
-            }
-
-            .cover-wrapper {
-                width: 150px;
-                height: 150px;
+                min-height: 48px;
+                bottom: calc(8px + env(safe-area-inset-bottom, 0px));
             }
 
             .shortcuts-bar {
                 display: none;
             }
-
         }
     </style>
 </head>
@@ -1379,48 +1498,48 @@
             <span>KnC Music</span>
         </div>
 
-        <!-- CUSTOM STYLED THEME DROPDOWN -->
+        <!-- CUSTOM STYLED THEME DROPDOWN (EMOJIS ONLY) -->
         <div class="theme-dropdown" id="themeDropdown">
             <button class="theme-trigger-btn" id="themeTriggerBtn" aria-haspopup="true" aria-expanded="false" title="Switch Theme">
                 <span class="theme-dot" id="activeThemeDot"></span>
-                <span id="activeThemeLabel">🌌 Midnight Indigo</span>
+                <span id="activeThemeLabel">🌌</span>
                 <svg class="theme-chevron" viewBox="0 0 24 24">
                     <path d="M7 10l5 5 5-5z"/>
                 </svg>
             </button>
             <div class="theme-menu" id="themeMenu" role="menu">
-                <button class="theme-option active" data-theme-val="indigo" data-theme-name="🌌 Midnight Indigo" role="menuitem">
+                <button class="theme-option active" data-theme-val="indigo" data-theme-name="🌌" role="menuitem" title="Indigo Theme">
                     <div class="theme-option-left">
                         <span class="theme-swatch indigo"></span>
-                        <span>🌌 Midnight Indigo</span>
+                        <span class="theme-emoji">🌌</span>
                     </div>
                     <svg class="theme-check" viewBox="0 0 24 24"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg>
                 </button>
-                <button class="theme-option" data-theme-val="cyberpunk" data-theme-name="⚡ Cyberpunk Neon" role="menuitem">
+                <button class="theme-option" data-theme-val="cyberpunk" data-theme-name="⚡" role="menuitem" title="Cyberpunk Theme">
                     <div class="theme-option-left">
                         <span class="theme-swatch cyberpunk"></span>
-                        <span>⚡ Cyberpunk Neon</span>
+                        <span class="theme-emoji">⚡</span>
                     </div>
                     <svg class="theme-check" viewBox="0 0 24 24"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg>
                 </button>
-                <button class="theme-option" data-theme-val="emerald" data-theme-name="🌿 Emerald Groove" role="menuitem">
+                <button class="theme-option" data-theme-val="emerald" data-theme-name="🌿" role="menuitem" title="Emerald Theme">
                     <div class="theme-option-left">
                         <span class="theme-swatch emerald"></span>
-                        <span>🌿 Emerald Groove</span>
+                        <span class="theme-emoji">🌿</span>
                     </div>
                     <svg class="theme-check" viewBox="0 0 24 24"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg>
                 </button>
-                <button class="theme-option" data-theme-val="sunset" data-theme-name="🌅 Sunset Glow" role="menuitem">
+                <button class="theme-option" data-theme-val="sunset" data-theme-name="🌅" role="menuitem" title="Sunset Theme">
                     <div class="theme-option-left">
                         <span class="theme-swatch sunset"></span>
-                        <span>🌅 Sunset Glow</span>
+                        <span class="theme-emoji">🌅</span>
                     </div>
                     <svg class="theme-check" viewBox="0 0 24 24"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg>
                 </button>
-                <button class="theme-option" data-theme-val="light" data-theme-name="☀️ Minimal Light" role="menuitem">
+                <button class="theme-option" data-theme-val="light" data-theme-name="☀️" role="menuitem" title="Light Theme">
                     <div class="theme-option-left">
                         <span class="theme-swatch light"></span>
-                        <span>☀️ Minimal Light</span>
+                        <span class="theme-emoji">☀️</span>
                     </div>
                     <svg class="theme-check" viewBox="0 0 24 24"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg>
                 </button>
@@ -1431,18 +1550,14 @@
     <div class="app-container">
         <!-- MAIN PLAYER CARD -->
         <main class="player-card">
-            <header class="card-header">
-                <div class="badge-group">
-                    <span class="badge" id="sourceBadge">KnC Music</span>
-                    <span class="badge speed-badge" id="speedBadge" title="Cycle playback speed (0.5x - 2x)">1.0x</span>
-                </div>
-                <div class="badge-group">
-                    <span class="badge" id="eqBadge" style="display:none; background:rgba(16,185,129,0.15); color:#10b981; border-color:rgba(16,185,129,0.3)">EQ: Flat</span>
-                </div>
-            </header>
+            <!-- Hidden elements for legacy script compatibility -->
+            <span id="sourceBadge" style="display:none;">KnC Music</span>
+            <span id="eqBadge" style="display:none;">EQ: Flat</span>
 
-            <!-- VINYL COVER & REAL-TIME AUDIO VISUALIZER -->
+            <!-- VINYL COVER, REAL-TIME AUDIO VISUALIZER & COMPACT SPEED CONTROLLER -->
             <div class="cover-visualizer-container">
+                <!-- SPEED CONTROLLER TO THE LEFT SIDE OF ALBUM CARD -->
+                <button type="button" class="badge speed-badge cover-speed-btn" id="speedBadge" title="Cycle playback speed (0.5x - 2x)">1.0x</button>
                 <canvas id="visualizerCanvas" width="260" height="260"></canvas>
                 <div class="cover-wrapper" id="coverWrapper" title="Album Art">
                     <img src="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='600' height='600' viewBox='0 0 600 600'><defs><linearGradient id='bg' x1='0%' y1='0%' x2='100%' y2='100%'><stop offset='0%' stop-color='%231e1b4b'/><stop offset='50%' stop-color='%23312e81'/><stop offset='100%' stop-color='%234c1d95'/></linearGradient><linearGradient id='vinyl' x1='0%' y1='0%' x2='100%' y2='100%'><stop offset='0%' stop-color='%2318181b'/><stop offset='50%' stop-color='%2327272a'/><stop offset='100%' stop-color='%2309090b'/></linearGradient><linearGradient id='accent' x1='0%' y1='0%' x2='100%' y2='100%'><stop offset='0%' stop-color='%23818cf8'/><stop offset='100%' stop-color='%23c084fc'/></linearGradient></defs><rect width='600' height='600' rx='40' fill='url(%23bg)'/><circle cx='300' cy='300' r='210' fill='url(%23vinyl)' stroke='%233f3f46' stroke-width='4'/><circle cx='300' cy='300' r='170' fill='none' stroke='%2327272a' stroke-width='2'/><circle cx='300' cy='300' r='130' fill='none' stroke='%2327272a' stroke-width='2'/><circle cx='300' cy='300' r='90' fill='url(%23accent)'/><circle cx='300' cy='300' r='28' fill='%2309090b'/><path d='M290 260v50.55c-2.95-1.7-6.35-2.75-10-2.75-11.05 0-20 8.95-20 20s8.95 20 20 20 20-8.95 20-20V280h20v-20h-30z' fill='%23ffffff'/></svg>" alt="Album Cover" class="cover-art" id="cover">
@@ -1695,7 +1810,7 @@
     </footer>
 
     <nav class="floating-belt" id="floatingBelt" aria-label="Quick access">
-        <a class="floating-belt-item" href="index.html" aria-label="Music" title="Music">
+        <a class="floating-belt-item active-page" href="javascript:void(0)" onclick="event.preventDefault(); return false;" aria-label="Music" title="Music">
             <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3v10.55c-.59-.34-1.27-.55-2-.55-2.21 0-4 1.79-4 4s1.79 4 4 4 4-1.79 4-4V7h4V3h-6z"/></svg>
             <span>Music</span>
         </a>
@@ -2219,6 +2334,26 @@
             updateMediaSession();
         }
 
+        // --- CROSS-PAGE AUDIO SYNC ---
+        function syncAudioState(playing) {
+            try {
+                const song = songs[songIndex];
+                const state = {
+                    isPlaying: !!playing,
+                    songIndex: songIndex,
+                    trackId: song ? song.id : null,
+                    name: song ? song.name : (titleEl ? titleEl.textContent : "KnC Music"),
+                    artist: song ? (song.artist || "KnC Music") : "KnC Music",
+                    currentTime: audio.currentTime || 0,
+                    duration: audio.duration || 0,
+                    volume: audio.volume,
+                    playbackRate: audio.playbackRate || 1,
+                    timestamp: Date.now()
+                };
+                localStorage.setItem("knc_audio_state", JSON.stringify(state));
+            } catch(e) {}
+        }
+
         function playSong() {
             if (!audio.src || songs.length === 0) {
                 fileInput.click();
@@ -2234,18 +2369,22 @@
             if (playPromise !== undefined) {
                 playPromise.then(() => {
                     updatePlayBtnUI(true);
+                    syncAudioState(true);
                     if ('mediaSession' in navigator) navigator.mediaSession.playbackState = 'playing';
                 }).catch(err => {
                     updatePlayBtnUI(false);
+                    syncAudioState(false);
                 });
             } else {
                 updatePlayBtnUI(true);
+                syncAudioState(true);
             }
         }
 
         function pauseSong() {
             audio.pause();
             updatePlayBtnUI(false);
+            syncAudioState(false);
             if ('mediaSession' in navigator) navigator.mediaSession.playbackState = 'paused';
         }
 
@@ -2739,6 +2878,58 @@
             document.querySelectorAll(".modal-backdrop, .drawer-backdrop").forEach(m => m.classList.remove("open"));
         }
 
+        // Helper to synthesize a rhythmic energetic workout loop as a clean WAV Blob
+        function createSynthBeatBlob(bpm = 128, bars = 4) {
+            const sampleRate = 44100;
+            const beatDuration = 60 / bpm;
+            const totalDuration = beatDuration * 4 * bars;
+            const totalSamples = Math.floor(sampleRate * totalDuration);
+            const buffer = new ArrayBuffer(44 + totalSamples * 2);
+            const view = new DataView(buffer);
+
+            view.setUint32(0, 0x52494646, false); // 'RIFF'
+            view.setUint32(4, 36 + totalSamples * 2, true);
+            view.setUint32(8, 0x57415645, false); // 'WAVE'
+            view.setUint32(12, 0x666d7420, false); // 'fmt '
+            view.setUint32(16, 16, true);
+            view.setUint16(20, 1, true); // PCM
+            view.setUint16(22, 1, true); // Mono
+            view.setUint32(24, sampleRate, true);
+            view.setUint32(28, sampleRate * 2, true);
+            view.setUint16(32, 2, true);
+            view.setUint16(34, 16, true);
+            view.setUint32(36, 0x64617461, false); // 'data'
+            view.setUint32(40, totalSamples * 2, true);
+
+            const stepSamples = Math.floor(sampleRate * (beatDuration / 4));
+            let offset = 44;
+            for (let i = 0; i < totalSamples; i++) {
+                const step = Math.floor(i / stepSamples) % 16;
+                const stepPos = (i % stepSamples) / sampleRate;
+                let sample = 0;
+
+                if (step % 4 === 0 && stepPos < 0.16) {
+                    const freq = 140 * Math.exp(-stepPos * 25);
+                    const env = Math.exp(-stepPos * 18);
+                    sample += Math.sin(2 * Math.PI * freq * stepPos) * env * 0.7;
+                }
+                if (step % 8 === 4 && stepPos < 0.12) {
+                    const noise = (Math.random() * 2 - 1) * Math.exp(-stepPos * 28);
+                    const tone = Math.sin(2 * Math.PI * 220 * stepPos) * Math.exp(-stepPos * 22);
+                    sample += (noise * 0.4 + tone * 0.3);
+                }
+                if (step % 2 === 0 && stepPos < 0.05) {
+                    const noise = (Math.random() * 2 - 1) * Math.exp(-stepPos * 70);
+                    sample += noise * 0.12;
+                }
+
+                sample = Math.max(-1, Math.min(1, sample));
+                view.setInt16(offset, sample < 0 ? sample * 0x8000 : sample * 0x7FFF, true);
+                offset += 2;
+            }
+            return new Blob([view], { type: 'audio/wav' });
+        }
+
         // --- RESTORE FROM INDEXEDDB ---
         async function restoreSavedLibrary() {
             const savedTracks = await loadAllSongsFromDB();
@@ -2758,33 +2949,69 @@
                         });
                     }
                 });
-                renderPlaylist();
-                loadSong(0);
             } else {
-                renderPlaylist();
-                loadSong(0);
+                // Built-in motivating workout presets so music is always ready
+                const presets = [
+                    { name: "KnC Cardio Groove (128 BPM)", artist: "Workout Groove", bpm: 128 },
+                    { name: "KnC High-Tempo HIIT (135 BPM)", artist: "Workout Groove", bpm: 135 },
+                    { name: "KnC Peak Interval (140 BPM)", artist: "Workout Groove", bpm: 140 }
+                ];
+                presets.forEach((p, idx) => {
+                    const blob = createSynthBeatBlob(p.bpm, 4);
+                    const blobUrl = URL.createObjectURL(blob);
+                    songs.push({
+                        id: "default_preset_" + idx,
+                        name: p.name,
+                        artist: p.artist,
+                        album: "KnC Fitness Collection",
+                        src: blobUrl,
+                        cover: DEFAULT_ALBUM_COVER,
+                        lyrics: "",
+                        isLocal: false
+                    });
+                });
             }
+            renderPlaylist();
+            loadSong(0);
+
+            // Sync playback state if arriving back from another page
+            try {
+                const savedState = JSON.parse(localStorage.getItem("knc_audio_state") || "null");
+                if (savedState && savedState.isPlaying && songs.length > 0) {
+                    const targetIdx = (typeof savedState.songIndex === 'number' && savedState.songIndex < songs.length) ? savedState.songIndex : 0;
+                    loadSong(targetIdx);
+                    const elapsed = (Date.now() - (savedState.timestamp || Date.now())) / 1000;
+                    audio.currentTime = Math.max(0, (savedState.currentTime || 0) + elapsed);
+                    playSong();
+                }
+            } catch(e) {}
         }
 
         // --- EVENT LISTENERS ---
         function initEventListeners() {
-            // Custom Styled Theme Dropdown Logic
+            // Custom Styled Theme Dropdown Logic (EMOJIS ONLY)
             const themeDropdown = document.getElementById("themeDropdown");
             const themeTriggerBtn = document.getElementById("themeTriggerBtn");
             const activeThemeLabel = document.getElementById("activeThemeLabel");
             const themeOptions = document.querySelectorAll(".theme-option");
 
+            const themeEmojiMap = {
+                indigo: "🌌",
+                cyberpunk: "⚡",
+                emerald: "🌿",
+                sunset: "🌅",
+                light: "☀️"
+            };
+
             function applyTheme(themeKey, themeLabel) {
                 document.documentElement.setAttribute("data-theme", themeKey);
                 localStorage.setItem("knc_theme", themeKey);
-                if (themeLabel) activeThemeLabel.textContent = themeLabel;
+                const emoji = themeLabel || themeEmojiMap[themeKey] || "🌌";
+                if (activeThemeLabel) activeThemeLabel.textContent = emoji;
 
                 themeOptions.forEach(opt => {
                     const isSelected = opt.getAttribute("data-theme-val") === themeKey;
                     opt.classList.toggle("active", isSelected);
-                    if (isSelected && !themeLabel) {
-                        activeThemeLabel.textContent = opt.getAttribute("data-theme-name");
-                    }
                 });
             }
 
@@ -2813,7 +3040,7 @@
             });
 
             const savedTheme = localStorage.getItem("knc_theme") || "indigo";
-            applyTheme(savedTheme);
+            applyTheme(savedTheme, themeEmojiMap[savedTheme]);
 
             // 12/24H format button
             timeFormatBtn.textContent = is24HourClock ? "24H" : "12H";
@@ -2860,12 +3087,23 @@
                 }
             });
 
+            let lastSyncTime = 0;
             audio.addEventListener("timeupdate", () => {
                 if (audio.duration && !isSeeking) {
                     progress.value = (audio.currentTime / audio.duration) * 100;
                     currentTimeEl.textContent = formatTime(audio.currentTime);
                 }
                 syncLyrics(audio.currentTime);
+
+                const now = Date.now();
+                if (now - lastSyncTime > 1500) {
+                    lastSyncTime = now;
+                    syncAudioState(!audio.paused);
+                }
+            });
+
+            window.addEventListener("beforeunload", () => {
+                syncAudioState(!audio.paused);
             });
 
             audio.addEventListener("loadedmetadata", () => {
@@ -3064,35 +3302,16 @@
         // --- INITIALIZATION ---
         function initFloatingBelt() {
             const floatingBelt = document.getElementById("floatingBelt");
-            let lastScrollY = window.scrollY;
-            let hideTimeout = null;
+            if (!floatingBelt) return;
+            // Sticky lower belt: always visible on music page
+            floatingBelt.classList.add("visible");
 
-            function hideBelt() {
-                floatingBelt.classList.remove("visible");
-                if (hideTimeout) clearTimeout(hideTimeout);
-                hideTimeout = null;
-            }
-
-            const musicItem = floatingBelt.querySelector('a[href="index.html"]');
+            const musicItem = floatingBelt.querySelector('a[href*="Music%20Player"], a[href="index.html"]');
             if (musicItem) {
                 musicItem.addEventListener("click", (e) => {
                     e.preventDefault();
                 });
             }
-
-            window.addEventListener("scroll", () => {
-                const currentScrollY = window.scrollY;
-
-                if (currentScrollY < lastScrollY) {
-                    floatingBelt.classList.add("visible");
-                    if (hideTimeout) clearTimeout(hideTimeout);
-                    hideTimeout = setTimeout(hideBelt, 4000);
-                } else if (currentScrollY > lastScrollY) {
-                    hideBelt();
-                }
-
-                lastScrollY = currentScrollY;
-            }, { passive: true });
         }
 
         async function init() {
