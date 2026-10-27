@@ -174,13 +174,6 @@
             transform: translateX(-2px);
         }
 
-        /* STRICT MOBILE BEHAVIOR: Back button ONLY on desktop */
-        @media (max-width: 768px) {
-            .page-back-button {
-                display: none !important;
-            }
-        }
-
         /* MAIN CONTAINER */
         .profile-container {
             width: 100%;
@@ -421,6 +414,26 @@
             .hm-btn svg {
                 width: 10px;
                 height: 10px;
+            }
+        }
+        @media (max-width: 380px) {
+            .header-music-card {
+                max-width: 164px;
+                gap: 3px;
+            }
+            .hm-info {
+                max-width: 72px;
+                gap: 4px;
+            }
+            .hm-title {
+                max-width: 48px;
+            }
+            .hm-controls {
+                gap: 2px;
+            }
+            .hm-btn {
+                width: 20px;
+                height: 20px;
             }
         }
 
@@ -976,7 +989,7 @@
                 </div>
             </div>
             <div class="header-music-card" id="headerMusicCard" role="region" aria-label="Music Mini Player">
-                <a href="Music%20Player.html" class="hm-info" id="hmInfo" title="Open KnC Music Player">
+                <a href="index.html" class="hm-info" id="hmInfo" title="Open KnC Music Player">
                     <span class="hm-wave">
                         <span class="hm-bar"></span>
                         <span class="hm-bar"></span>
@@ -992,7 +1005,7 @@
                     <button type="button" class="hm-btn hm-next-btn" id="hmNextBtn" title="Next Track" aria-label="Next Track">
                         <svg viewBox="0 0 24 24"><polygon points="5 4 15 12 5 20 5 4"></polygon><line x1="19" y1="5" x2="19" y2="19"></line></svg>
                     </button>
-                    <button type="button" class="hm-btn hm-close-btn" id="hmCloseBtn" title="Close and Pause" aria-label="Close and Pause Music">
+                    <button type="button" class="hm-btn hm-close-btn" id="hmCloseBtn" title="Close mini-player" aria-label="Close music mini-player">
                         <svg viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
                     </button>
                 </div>

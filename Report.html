@@ -247,6 +247,193 @@
             font-weight: 500;
         }
 
+        /* HEADER MUSIC CARD (TOP RIGHT FLOATING NOTIFICATION) */
+        .header-music-card {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: var(--card-bg, rgba(255, 255, 255, 0.08));
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid var(--card-border, rgba(255, 255, 255, 0.15));
+            border-radius: 999px;
+            padding: 4px 6px 4px 10px;
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
+            user-select: none;
+            transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+            max-width: 220px;
+            flex-shrink: 0;
+        }
+        .header-music-card:hover {
+            border-color: var(--accent, #6366f1);
+            box-shadow: 0 4px 18px rgba(99, 102, 241, 0.25);
+        }
+        .header-music-card.hm-hidden {
+            display: none !important;
+        }
+
+        .hm-info {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            text-decoration: none;
+            color: var(--text-primary, #ffffff);
+            overflow: hidden;
+            cursor: pointer;
+            max-width: 100px;
+        }
+        .hm-info:hover .hm-title {
+            color: var(--accent, #6366f1);
+        }
+        .hm-title {
+            font-size: 0.73rem;
+            font-weight: 700;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            letter-spacing: -0.01em;
+        }
+
+        .hm-wave {
+            display: inline-flex;
+            align-items: flex-end;
+            gap: 2px;
+            height: 12px;
+            flex-shrink: 0;
+        }
+        .hm-bar {
+            width: 2px;
+            background: var(--accent, #6366f1);
+            border-radius: 1px;
+            height: 3px;
+            transition: height 0.2s ease, background-color 0.2s ease;
+        }
+        .header-music-card.is-playing .hm-bar {
+            animation: hmWave 1s ease-in-out infinite alternate;
+        }
+        .header-music-card.is-playing .hm-bar:nth-child(1) { animation-delay: 0.1s; height: 6px; }
+        .header-music-card.is-playing .hm-bar:nth-child(2) { animation-delay: 0.3s; height: 12px; }
+        .header-music-card.is-playing .hm-bar:nth-child(3) { animation-delay: 0.5s; height: 8px; }
+        @keyframes hmWave {
+            0% { height: 3px; }
+            100% { height: 12px; }
+        }
+        .header-music-card:not(.is-playing) .hm-bar {
+            background: var(--text-muted, #94a3b8);
+            height: 3px;
+            animation: none;
+        }
+
+        .hm-controls {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+        }
+        .hm-btn {
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            border: none;
+            background: rgba(255, 255, 255, 0.08);
+            color: var(--text-primary, #ffffff);
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            padding: 0;
+            transition: all 0.2s ease;
+        }
+        .hm-btn svg {
+            width: 12px;
+            height: 12px;
+            stroke: currentColor;
+            fill: currentColor;
+            stroke-width: 0;
+        }
+        .hm-btn:hover {
+            background: var(--accent, #6366f1);
+            color: #ffffff;
+            transform: scale(1.08);
+        }
+        .hm-btn:active {
+            transform: scale(0.94);
+        }
+
+        .hm-play-btn .hm-icon-pause {
+            display: none;
+            stroke: currentColor;
+            stroke-width: 2.5;
+            fill: none;
+        }
+        .hm-play-btn .hm-icon-play {
+            display: block;
+            fill: currentColor;
+        }
+        .header-music-card.is-playing .hm-play-btn .hm-icon-pause {
+            display: block;
+        }
+        .header-music-card.is-playing .hm-play-btn .hm-icon-play {
+            display: none;
+        }
+
+        .hm-next-btn svg {
+            fill: currentColor;
+        }
+
+        .hm-close-btn {
+            background: transparent;
+            color: var(--text-muted, #94a3b8);
+        }
+        .hm-close-btn svg {
+            fill: none;
+            stroke: currentColor;
+            stroke-width: 2.5;
+        }
+        .hm-close-btn:hover {
+            background: rgba(239, 68, 68, 0.2);
+            color: #ef4444;
+        }
+
+        @media (max-width: 600px) {
+            .header-music-card {
+                padding: 3px 4px 3px 8px;
+                gap: 5px;
+                max-width: 170px;
+            }
+            .hm-title {
+                max-width: 60px;
+                font-size: 0.69rem;
+            }
+            .hm-btn {
+                width: 22px;
+                height: 22px;
+            }
+            .hm-btn svg {
+                width: 10px;
+                height: 10px;
+            }
+        }
+        @media (max-width: 380px) {
+            .header-music-card {
+                max-width: 164px;
+                gap: 3px;
+            }
+            .hm-info {
+                max-width: 72px;
+                gap: 4px;
+            }
+            .hm-title {
+                max-width: 48px;
+            }
+            .hm-controls {
+                gap: 2px;
+            }
+            .hm-btn {
+                width: 20px;
+                height: 20px;
+            }
+        }
+
         /* GLASS CARD COMMON */
         .glass-card {
             background: var(--card-bg);
@@ -1379,6 +1566,28 @@
                     <p>Workout History &amp; Body Analytics</p>
                 </div>
             </div>
+            <div class="header-music-card" id="headerMusicCard" role="region" aria-label="Music Mini Player">
+                <a href="index.html" class="hm-info" id="hmInfo" title="Open KnC Music Player">
+                    <span class="hm-wave">
+                        <span class="hm-bar"></span>
+                        <span class="hm-bar"></span>
+                        <span class="hm-bar"></span>
+                    </span>
+                    <span class="hm-title" id="hmTitle">KnC Music</span>
+                </a>
+                <div class="hm-controls">
+                    <button type="button" class="hm-btn hm-play-btn" id="hmPlayBtn" title="Play / Pause" aria-label="Play or Pause">
+                        <svg class="hm-icon-play" viewBox="0 0 24 24"><polygon points="6 4 20 12 6 20 6 4"></polygon></svg>
+                        <svg class="hm-icon-pause" viewBox="0 0 24 24"><line x1="8" y1="5" x2="8" y2="19"></line><line x1="16" y1="5" x2="16" y2="19"></line></svg>
+                    </button>
+                    <button type="button" class="hm-btn hm-next-btn" id="hmNextBtn" title="Next Track" aria-label="Next Track">
+                        <svg viewBox="0 0 24 24"><polygon points="5 4 15 12 5 20 5 4"></polygon><line x1="19" y1="5" x2="19" y2="19"></line></svg>
+                    </button>
+                    <button type="button" class="hm-btn hm-close-btn" id="hmCloseBtn" title="Close mini-player" aria-label="Close music mini-player">
+                        <svg viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+                    </button>
+                </div>
+            </div>
         </header>
 
         <!-- ========================================================= -->
@@ -1724,7 +1933,7 @@
 
     <!-- FLOATING BELT (Quick Access Navigation Across All Pages except Profile) -->
     <nav class="floating-belt" id="floatingBelt" aria-label="Quick access">
-        <a class="floating-belt-item" href="Music%20Player.html" aria-label="Music" title="Music">
+        <a class="floating-belt-item" href="index.html" aria-label="Music" title="Music">
             <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3v10.55c-.59-.34-1.27-.55-2-.55-2.21 0-4 1.79-4 4s1.79 4 4 4 4-1.79 4-4V7h4V3h-6z"/></svg>
             <span>Music</span>
         </a>
@@ -1732,7 +1941,7 @@
             <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20.57 14.86 22 13.43 20.57 12l-3.57 3.57-8.57-8.57L12 3.43 10.57 2 9.14 3.43 7.71 2 5.57 4.14 4.14 2.71 2.71 4.14l1.43 1.43L2 7.71l1.43 1.43L2 10.57 3.43 12l3.57-3.57 8.57 8.57L12 20.57 13.43 22l1.43-1.43L16.29 22l2.14-2.14 1.43 1.43 1.43-1.43-1.43-1.43L22 16.29z"/></svg>
             <span>Training</span>
         </a>
-        <a class="floating-belt-item active-page" href="Report.html" aria-label="Report" title="Report">
+        <a class="floating-belt-item active-page" href="javascript:void(0)" onclick="event.preventDefault(); return false;" aria-label="Report" title="Report">
             <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M14 2H6c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V8l-6-6zm-1 1.5L18.5 9H13V3.5zM8 13h8v1.5H8V13zm0 3h8v1.5H8V16zm0-6h2v1.5H8V10z"/></svg>
             <span>Report</span>
         </a>
