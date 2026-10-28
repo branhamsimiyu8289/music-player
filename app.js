@@ -9,6 +9,7 @@
    ========================================================================= */
 
 let currentView = "music";
+let floatingBeltHideTimeout = null;
 
 function switchView(viewName) {
     if (!viewName) return;
@@ -36,6 +37,16 @@ function switchView(viewName) {
     // Show target view
     views[cleanView].classList.add("active");
     currentView = cleanView;
+    document.body.dataset.activeView = cleanView;
+    document.body.classList.toggle("music-view-active", cleanView === "music");
+    const floatingBelt = document.getElementById("floatingBelt");
+    if (floatingBelt && window.matchMedia("(max-width: 600px)").matches) {
+        if (floatingBeltHideTimeout) {
+            clearTimeout(floatingBeltHideTimeout);
+            floatingBeltHideTimeout = null;
+        }
+        floatingBelt.classList.toggle("visible", cleanView === "music");
+    }
 
     // Update floating belt active highlight
     document.querySelectorAll(".floating-belt-item").forEach(item => {
@@ -1781,6 +1792,7 @@ window.showToast = showToast;
             const toastText = document.getElementById("toastText");
             let toastTimer = null;
             function showToast(msg) {
+                if (!toastMsg || !toastText) return;
                 if (toastTimer) clearTimeout(toastTimer);
                 toastText.textContent = msg;
                 toastMsg.classList.add("show");
@@ -2641,12 +2653,13 @@ window.showToast = showToast;
                 const floatingBelt = document.getElementById("floatingBelt");
                 if (!floatingBelt) return;
                 let lastScrollY = window.scrollY;
-                let hideTimeout = null;
+                let lastActiveView = currentView;
+                const isMobile = window.matchMedia("(max-width: 600px)").matches;
 
                 function hideBelt() {
                     floatingBelt.classList.remove("visible");
-                    if (hideTimeout) clearTimeout(hideTimeout);
-                    hideTimeout = null;
+                    if (floatingBeltHideTimeout) clearTimeout(floatingBeltHideTimeout);
+                    floatingBeltHideTimeout = null;
                 }
 
                 const trainingLink = floatingBelt.querySelector('a[href*="Training.html"]');
@@ -2656,16 +2669,30 @@ window.showToast = showToast;
                     });
                 }
 
-                floatingBelt.classList.add("visible");
-                hideTimeout = setTimeout(hideBelt, 4000);
+                if (isMobile) {
+                    hideBelt();
+                } else {
+                    floatingBelt.classList.add("visible");
+                    if (floatingBeltHideTimeout) clearTimeout(floatingBeltHideTimeout);
+                    floatingBeltHideTimeout = setTimeout(hideBelt, 4000);
+                }
 
                 window.addEventListener("scroll", () => {
                     const currentScrollY = window.scrollY;
+                    if (isMobile && currentView !== lastActiveView) {
+                        lastActiveView = currentView;
+                        lastScrollY = currentScrollY;
+                        return;
+                    }
+                    if (isMobile && currentView !== "training") {
+                        lastScrollY = currentScrollY;
+                        return;
+                    }
 
                     if (currentScrollY < lastScrollY) {
                         floatingBelt.classList.add("visible");
-                        if (hideTimeout) clearTimeout(hideTimeout);
-                        hideTimeout = setTimeout(hideBelt, 4000);
+                        if (floatingBeltHideTimeout) clearTimeout(floatingBeltHideTimeout);
+                        floatingBeltHideTimeout = setTimeout(hideBelt, 4000);
                     } else if (currentScrollY > lastScrollY) {
                         hideBelt();
                     }
@@ -2673,13 +2700,15 @@ window.showToast = showToast;
                     lastScrollY = currentScrollY;
                 }, { passive: true });
 
-                window.addEventListener("mousemove", (e) => {
-                    if (window.innerHeight - e.clientY < 80) {
-                        floatingBelt.classList.add("visible");
-                        if (hideTimeout) clearTimeout(hideTimeout);
-                        hideTimeout = setTimeout(hideBelt, 4000);
-                    }
-                });
+                if (!isMobile) {
+                    window.addEventListener("mousemove", (e) => {
+                        if (window.innerHeight - e.clientY < 80) {
+                            floatingBelt.classList.add("visible");
+                            if (floatingBeltHideTimeout) clearTimeout(floatingBeltHideTimeout);
+                            floatingBeltHideTimeout = setTimeout(hideBelt, 4000);
+                        }
+                    });
+                }
             }
 
             // INITIALIZATION
@@ -3612,12 +3641,13 @@ window.showToast = showToast;
                 const floatingBelt = document.getElementById("floatingBelt");
                 if (!floatingBelt) return;
                 let lastScrollY = window.scrollY;
-                let hideTimeout = null;
+                let lastActiveView = currentView;
+                const isMobile = window.matchMedia("(max-width: 600px)").matches;
 
                 function hideBelt() {
                     floatingBelt.classList.remove("visible");
-                    if (hideTimeout) clearTimeout(hideTimeout);
-                    hideTimeout = null;
+                    if (floatingBeltHideTimeout) clearTimeout(floatingBeltHideTimeout);
+                    floatingBeltHideTimeout = null;
                 }
 
                 // Prevent reload on clicking Report while on Report
@@ -3628,16 +3658,30 @@ window.showToast = showToast;
                     });
                 }
 
-                floatingBelt.classList.add("visible");
-                hideTimeout = setTimeout(hideBelt, 4000);
+                if (isMobile) {
+                    hideBelt();
+                } else {
+                    floatingBelt.classList.add("visible");
+                    if (floatingBeltHideTimeout) clearTimeout(floatingBeltHideTimeout);
+                    floatingBeltHideTimeout = setTimeout(hideBelt, 4000);
+                }
 
                 window.addEventListener("scroll", () => {
                     const currentScrollY = window.scrollY;
+                    if (isMobile && currentView !== lastActiveView) {
+                        lastActiveView = currentView;
+                        lastScrollY = currentScrollY;
+                        return;
+                    }
+                    if (isMobile && currentView !== "report") {
+                        lastScrollY = currentScrollY;
+                        return;
+                    }
 
                     if (currentScrollY < lastScrollY) {
                         floatingBelt.classList.add("visible");
-                        if (hideTimeout) clearTimeout(hideTimeout);
-                        hideTimeout = setTimeout(hideBelt, 4000);
+                        if (floatingBeltHideTimeout) clearTimeout(floatingBeltHideTimeout);
+                        floatingBeltHideTimeout = setTimeout(hideBelt, 4000);
                     } else if (currentScrollY > lastScrollY) {
                         hideBelt();
                     }
@@ -3645,13 +3689,15 @@ window.showToast = showToast;
                     lastScrollY = currentScrollY;
                 }, { passive: true });
 
-                window.addEventListener("mousemove", (e) => {
-                    if (window.innerHeight - e.clientY < 80) {
-                        floatingBelt.classList.add("visible");
-                        if (hideTimeout) clearTimeout(hideTimeout);
-                        hideTimeout = setTimeout(hideBelt, 4000);
-                    }
-                });
+                if (!isMobile) {
+                    window.addEventListener("mousemove", (e) => {
+                        if (window.innerHeight - e.clientY < 80) {
+                            floatingBelt.classList.add("visible");
+                            if (floatingBeltHideTimeout) clearTimeout(floatingBeltHideTimeout);
+                            floatingBeltHideTimeout = setTimeout(hideBelt, 4000);
+                        }
+                    });
+                }
             }
 
             // INITIALIZE
@@ -3710,6 +3756,7 @@ window.showToast = showToast;
 
             // SHOW TOAST
             function showToast(message) {
+                if (!toastMsg || !toastText) return;
                 if (toastTimer) clearTimeout(toastTimer);
                 toastText.textContent = message;
                 toastMsg.classList.add("show");
@@ -4028,4 +4075,3 @@ document.addEventListener("DOMContentLoaded", async () => {
     // 4. Initial sync of audio state
     syncHeaderMusicCards();
 });
-

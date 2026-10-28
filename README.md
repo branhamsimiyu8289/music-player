@@ -2,14 +2,9 @@
 
 KnC Music is a browser-based music player and personal wellness app built with HTML, CSS, and vanilla JavaScript. It runs as a static site and does not require a build step or package installation.
 
-## Pages
+## App views
 
-- **Music player** (`index.html`): Add and play local audio files, manage a persistent playlist, view album art and lyrics, and use the audio tools.
-- **Training** (`Training.html`): Browse home and gym workout routines.
-- **Profile** (`Profile.html`): Save profile details and a profile picture.
-- **Report** (`Report.html`): Review workout history and body analytics.
-
-The pages share local browser storage where appropriate. Your music files and personal data are stored in your browser, not uploaded to a server. Browser storage is tied to the site origin, so data saved locally will not automatically carry over to a deployed GitHub Pages site.
+The app is a single-page application in `index.html`. Its Music, Training, Report, and Profile views are switched using the navigation belt. Your music files and personal data are stored in your browser, not uploaded to a server. Browser storage is tied to the site origin, so data saved locally will not automatically carry over to a deployed GitHub Pages site.
 
 ## Music player features
 
@@ -59,7 +54,6 @@ GitHub Pages will use `index.html` as the site entry point. The site is static a
 
 ## Project files
 
-- `index.html` — Music player entry point.
-- `Training.html`, `Profile.html`, `Report.html` — Additional app pages.
-- `navigation.js`, `navigation.css` — Shared page navigation behavior and styles.
-- `styles.css` — Standalone stylesheet not currently linked by the HTML pages.
+- `index.html` — Single-page app containing the Music, Training, Report, and Profile views.
+- `styles.css` — Styles for all app views.
+- `app.js` — Application logic for music playback, navigation, training, reports, and profile.
