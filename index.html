@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en" data-theme="indigo">
 <head>
     <meta charset="UTF-8">
@@ -472,6 +472,7 @@
             position: relative;
             width: 180px;
             height: 180px;
+            flex-shrink: 0;
             border-radius: 50%;
             padding: 5px;
             background: linear-gradient(135deg, rgba(255,255,255,0.2) 0%, rgba(255,255,255,0.02) 100%);
@@ -486,6 +487,7 @@
         }
 
         .cover-art {
+            display: block;
             width: 100%;
             height: 100%;
             object-fit: cover;
@@ -550,10 +552,7 @@
             transform: scale(1.06);
             color: #ffffff;
         }
-            cursor: pointer;
-            z-index: 3;
-            transition: all 0.2s;
-        }
+
         .visualizer-toggle-btn:hover {
             background: var(--accent);
             transform: scale(1.1);
@@ -643,10 +642,6 @@
             flex: 0 0 46px;
         }
 
-        .controls-row .icon-btn {
-            flex: 0 0 46px;
-        }
-
         .icon-btn {
             background: none;
             border: none;
@@ -693,6 +688,12 @@
         }
 
         .icon-btn.play-btn svg {
+            width: 30px;
+            height: 30px;
+            flex: 0 0 30px;
+        }
+
+        .controls-row .icon-btn.play-btn svg {
             width: 30px;
             height: 30px;
             flex: 0 0 30px;
@@ -1391,52 +1392,71 @@
 
         @media (max-width: 600px) {
             body {
-                padding: 10px 10px calc(66px + env(safe-area-inset-bottom, 0px));
+                justify-content: flex-start;
                 min-height: 100vh;
+                min-height: 100dvh;
+                padding: 10px 10px calc(76px + env(safe-area-inset-bottom, 0px));
             }
 
             .top-navbar {
-                margin-bottom: 8px;
+                margin-bottom: 12px;
                 padding: 0 4px;
             }
 
             .app-container {
-                gap: 8px;
+                flex: 1;
+                justify-content: space-evenly;
+                gap: clamp(12px, 2.5vh, 22px);
             }
 
             .player-card {
-                padding: 12px 14px 10px;
+                padding: 16px 14px 14px;
                 border-radius: 18px;
             }
 
             .cover-visualizer-container {
-                width: 140px;
-                height: 140px;
-                margin: 0 auto 6px;
+                width: min(100%, 270px);
+                height: auto;
+                aspect-ratio: 1;
+                margin: 2px 0 12px;
             }
 
             #visualizerCanvas {
-                width: 160px;
-                height: 160px;
+                width: 100%;
+                height: 100%;
             }
 
             .cover-wrapper {
-                width: 110px;
-                height: 110px;
+                width: min(62vw, 160px);
+                height: auto;
+                aspect-ratio: 1;
             }
 
             .cover-speed-btn {
-                bottom: 2px;
+                top: 50%;
+                bottom: auto;
                 left: 2px;
                 padding: 3px 8px;
                 font-size: 0.68rem;
+                transform: translateY(-50%);
+            }
+
+            .cover-speed-btn:hover {
+                transform: translateY(-50%) scale(1.06);
             }
 
             .visualizer-toggle-btn {
-                bottom: 2px;
+                top: 50%;
+                bottom: auto;
                 right: 2px;
                 width: 28px;
                 height: 28px;
+                transform: translateY(-50%);
+            }
+
+            .visualizer-toggle-btn:hover {
+                transform: translateY(-50%) scale(1.1);
+                background: var(--accent);
             }
 
             .track-details {
@@ -1453,7 +1473,7 @@
 
             .controls-row {
                 gap: 8px;
-                margin-bottom: 6px;
+                margin-bottom: 10px;
             }
 
             .controls-row .icon-btn,
@@ -1464,15 +1484,17 @@
                 flex: 0 0 44px;
             }
 
+            .controls-row .icon-btn svg,
+            .controls-row .icon-btn.play-btn svg {
+                width: 22px;
+                height: 22px;
+            }
+
             .controls-row .icon-btn.play-btn svg {
                 width: 28px;
                 height: 28px;
                 flex: 0 0 28px;
-            }
-
-            .control-btn svg {
-                width: 20px;
-                height: 20px;
+                flex: 0 0 28px;
             }
 
             .volume-container {
@@ -1480,7 +1502,7 @@
             }
 
             .watch-card {
-                padding: 8px 14px;
+                padding: 12px 14px;
                 border-radius: 16px;
             }
 
@@ -1505,6 +1527,79 @@
 
             .shortcuts-bar {
                 display: none;
+            }
+        }
+
+        @media (max-width: 600px) and (max-height: 700px) {
+            body {
+                padding-top: 6px;
+                padding-bottom: calc(68px + env(safe-area-inset-bottom, 0px));
+            }
+
+            .top-navbar {
+                margin-bottom: 6px;
+            }
+
+            .app-container {
+                gap: 8px;
+            }
+
+            .player-card {
+                padding: 10px 12px;
+            }
+
+            .card-header {
+                margin-bottom: 8px;
+            }
+
+            .cover-visualizer-container {
+                width: min(100%, 210px);
+                margin: 0 0 4px;
+            }
+
+            .cover-wrapper {
+                width: min(52vw, 120px);
+            }
+
+            .track-details {
+                margin-bottom: 4px;
+            }
+
+            .progress-container {
+                margin-bottom: 4px;
+            }
+
+            .controls-row {
+                gap: 8px;
+                margin-bottom: 4px;
+            }
+
+            .controls-row .icon-btn,
+            .controls-row .icon-btn.play-btn {
+                width: 40px;
+                height: 40px;
+                padding: 9px;
+            }
+
+            .quick-utils-bar {
+                padding: 4px 6px;
+                margin-bottom: 8px;
+                gap: 3px;
+            }
+
+            .util-btn {
+                gap: 2px;
+                padding: 4px;
+                font-size: 0.62rem;
+            }
+
+            .watch-card {
+                padding: 8px 12px;
+            }
+
+            .clock-time {
+                font-size: 1.05rem;
+                margin: 0;
             }
         }
     </style>
