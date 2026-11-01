@@ -57,3 +57,8 @@ GitHub Pages will use `index.html` as the site entry point. The site is static a
 - `index.html` — Single-page app containing the Music, Training, Report, and Profile views.
 - `styles.css` — Styles for all app views.
 - `app.js` — Application logic for music playback, navigation, training, reports, and profile.
+
+
+##Author 
+
+Branham Simiyu 
