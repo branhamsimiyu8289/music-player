@@ -59,6 +59,6 @@ GitHub Pages will use `index.html` as the site entry point. The site is static a
 - `app.js` — Application logic for music playback, navigation, training, reports, and profile.
 
 
-##Author 
+## Author 
 
 Branham Simiyu 
