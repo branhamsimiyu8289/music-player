@@ -1,64 +1,135 @@
-# KnC Music
+# KnC Music & Wellness
 
-KnC Music is a browser-based music player and personal wellness app built with HTML, CSS, and vanilla JavaScript. It runs as a static site and does not require a build step or package installation.
+A browser-based single-page app that combines a rich music player with a home/gym workout planner, progress tracking, and wellness logging. Built with plain HTML, CSS, and JavaScript, the project runs entirely in the browser with no build step or package installation required.
 
-## App views
+## Overview
 
-The app is a single-page application in `index.html`. Its Music, Training, Report, and Profile views are switched using the navigation belt. Your music files and personal data are stored in your browser, not uploaded to a server. Browser storage is tied to the site origin, so data saved locally will not automatically carry over to a deployed GitHub Pages site.
+KnC Music & Wellness is a personal productivity and self-care dashboard designed for daily use. It gives you:
 
-## Music player features
+- a modern music player with queue management, equalizer, visualizer, lyrics, and sleep timer
+- guided training routines for home and gym workouts
+- progress tracking for workouts, streaks, and historical records
+- wellness tools for hydration, calorie intake, weight tracking, and BMI monitoring
 
-- Audio playback controls, shuffle, repeat, playback speed, and volume up to 200%.
-- Three audio visualizer modes and a five-band equalizer with sound presets.
-- Reads available ID3 track details, embedded cover art, and lyrics from audio files.
-- Saves the playlist, track metadata, and edited lyrics in IndexedDB.
-- Displays plain or timestamped lyrics, with synchronized highlighting and click-to-seek.
-- Sleep timer with preset durations or an end-of-track option.
-- Five color themes, a live clock, and 12/24-hour display.
-- Keyboard shortcuts:
+The app is designed as a static web application, so you can open it locally or deploy it to GitHub Pages with minimal setup.
 
-  | Key | Action |
-  | --- | --- |
-  | <kbd>Space</kbd> | Play or pause |
-  | <kbd>Left</kbd> / <kbd>Right</kbd> | Seek backward or forward 5 seconds |
-  | <kbd>Up</kbd> / <kbd>Down</kbd> | Raise or lower volume |
-  | <kbd>M</kbd> | Mute or unmute |
-  | <kbd>N</kbd> / <kbd>P</kbd> | Next or previous track |
-  | <kbd>E</kbd> / <kbd>L</kbd> | Open equalizer or lyrics |
-  | <kbd>Esc</kbd> | Close open dialogs |
+## Highlights
 
-Available audio formats depend on the browser. The player accepts common formats such as MP3, M4A, WAV, OGG, FLAC, AAC, and WMA.
+### Music player
 
-## Run locally
+- audio playback with play/pause, previous/next, shuffle, and repeat
+- track progress bar and seek controls
+- adjustable playback speed and volume up to 200%
+- visualizer modes and a 5-band equalizer with presets
+- lyrics viewing and editing, including timestamped lyrics
+- sleep timer with preset durations and end-of-track shutdown
+- support for common browser audio formats like MP3, M4A, WAV, OGG, FLAC, AAC, and WMA
+- theme switching with multiple color palettes
 
-Open `index.html` in a modern browser. No build tools or dependencies are required.
+### Training and fitness
 
-For the most consistent browser storage behavior, serve the folder over localhost:
+- home workout routines and gym workout selection
+- custom exercise creation for both workout types
+- workout progression and daily exercise completion tracking
+- tabbed workout modes with structured, repeatable plans
 
-```powershell
-py -m http.server 8000
-```
+### Reports and analytics
 
-Then open <http://localhost:8000>.
+- calendar-based workout summary view
+- training streak tracking and record statistics
+- weight and BMI trend visualization
+- body analytics and daily performance history
 
-The app loads its fonts from Google Fonts, so the custom fonts require an internet connection. System fonts are used as a fallback.
+### Wellness tracking
 
-## Publish with GitHub Pages
+- hydration tracking with quick-add water actions
+- calorie logging and meal tracking
+- daily wellness summaries for consistency and routine-building
 
-1. Create a GitHub repository and add the project files to its root.
-2. Push the files to the repository's `main` branch.
-3. In the repository, open **Settings → Pages**.
-4. Under **Build and deployment**, choose **Deploy from a branch**, select `main` and the `/ (root)` folder, then save.
+## App structure
 
-GitHub Pages will use `index.html` as the site entry point. The site is static and does not need a GitHub Actions workflow.
+- `index.html` — main single-page application shell and UI sections
+- `styles.css` — visual design, layout, themes, and responsive styling
+- `app.js` — core application logic for playback, fitness tools, reporting, and local state
 
 ## Project files
 
-- `index.html` — Single-page app containing the Music, Training, Report, and Profile views.
-- `styles.css` — Styles for all app views.
-- `app.js` — Application logic for music playback, navigation, training, reports, and profile.
+- `index.html`: contains the full SPA interface, including music, training, report, and wellness views
+- `styles.css`: full styling system for desktop and mobile layouts
+- `app.js`: all interactive logic, state management, and browser-based persistence
 
+## Running locally
 
-## Author 
+Because this project is a static web app, you can run it in either of the following ways:
 
-Branham Simiyu 
+### Option 1: Open directly in a browser
+
+Open `index.html` in a modern browser.
+
+### Option 2: Serve it locally
+
+From the project root, run:
+
+```bash
+python -m http.server 8000
+```
+
+Then open:
+
+```text
+http://localhost:8000
+```
+
+This is recommended for more consistent browser storage behavior and a smoother local experience.
+
+## GitHub Pages deployment
+
+You can deploy the app to GitHub Pages with the following steps:
+
+1. Push this project to a GitHub repository.
+2. Open your repository on GitHub.
+3. Go to `Settings` → `Pages`.
+4. Set the source to the `main` branch and root folder (`/`).
+5. Save the configuration.
+
+GitHub Pages will serve the static site using `index.html` as the entry file.
+
+## Keyboard shortcuts
+
+| Key | Action |
+| --- | --- |
+| `Space` | Play or pause |
+| Left / Right Arrow | Seek backward or forward |
+| Up / Down Arrow | Adjust volume |
+| `M` | Mute or unmute |
+| `N` / `P` | Next or previous track |
+| `E` / `L` | Open equalizer or lyrics |
+| `Esc` | Close dialogs |
+
+## Browser notes
+
+- The app is designed for modern desktop and mobile browsers.
+- Custom fonts are loaded from Google Fonts; internet access is needed for those styles unless the browser falls back to system fonts.
+- Supported audio formats depend on the browser and OS codec support.
+
+## License
+
+This project does not currently include a license file. If you plan to share or reuse it publicly, consider adding an open-source license such as MIT.
+
+## Author
+
+Branham Simiyu
+
+## Contributing
+
+Contributions are welcome. If you want to improve the app, consider:
+
+- improving the UI/UX design
+- adding new workout plans or wellness data features
+- enhancing the player controls and accessibility
+- refining analytics or visualizations
+- documenting more of the app behavior and workflows
+
+## Summary
+
+KnC Music & Wellness is a full-featured browser app that blends entertainment, fitness, and routine tracking into one polished experience. Its lightweight architecture makes it easy to run, customize, and deploy without a complex setup.
