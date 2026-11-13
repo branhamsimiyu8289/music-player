@@ -1,0 +1,19 @@
+{
+  "name": "KnC Music & Wellness",
+  "short_name": "KnC Music",
+  "description": "High-performance browser-based music player and personal wellness training tracker.",
+  "start_url": "./index.html",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#090d16",
+  "theme_color": "#6366f1",
+  "orientation": "portrait-primary",
+  "icons": [
+    {
+      "src": "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><circle cx='50' cy='50' r='50' fill='%23111827'/><circle cx='50' cy='50' r='36' fill='%231e1b4b'/><circle cx='50' cy='50' r='18' fill='%236366f1'/><path d='M48 38v16.55c-.59-.34-1.27-.55-2-.55-2.21 0-4 1.79-4 4s1.79 4 4 4 4-1.79 4-4V44h8v-6h-6z' fill='%23ffffff'/></svg>",
+      "sizes": "192x192 512x512",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}

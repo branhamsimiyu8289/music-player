@@ -40,12 +40,8 @@ function switchView(viewName) {
     document.body.dataset.activeView = cleanView;
     document.body.classList.toggle("music-view-active", cleanView === "music");
     const floatingBelt = document.getElementById("floatingBelt");
-    if (floatingBelt && window.matchMedia("(max-width: 600px)").matches) {
-        if (floatingBeltHideTimeout) {
-            clearTimeout(floatingBeltHideTimeout);
-            floatingBeltHideTimeout = null;
-        }
-        floatingBelt.classList.toggle("visible", cleanView === "music");
+    if (floatingBelt) {
+        floatingBelt.classList.add("visible");
     }
 
     // Update floating belt active highlight
@@ -410,7 +406,9 @@ window.showToast = showToast;
         let audioCtx = null;
         let sourceNode = null;
         let gainNode = null;
+        let compressorNode = null;
         let analyserNode = null;
+        let cachedAccentColor = "#6366f1";
         let eqBands = [];
         const EQ_FREQS = [60, 250, 1000, 4000, 12000];
 
@@ -510,6 +508,13 @@ window.showToast = showToast;
                 gainNode = audioCtx.createGain();
                 gainNode.gain.value = parseFloat(volume.value);
 
+                compressorNode = audioCtx.createDynamicsCompressor();
+                compressorNode.threshold.setValueAtTime(-8, audioCtx.currentTime);
+                compressorNode.knee.setValueAtTime(24, audioCtx.currentTime);
+                compressorNode.ratio.setValueAtTime(12, audioCtx.currentTime);
+                compressorNode.attack.setValueAtTime(0.003, audioCtx.currentTime);
+                compressorNode.release.setValueAtTime(0.25, audioCtx.currentTime);
+
                 analyserNode = audioCtx.createAnalyser();
                 analyserNode.fftSize = 256;
                 analyserNode.smoothingTimeConstant = 0.8;
@@ -520,7 +525,8 @@ window.showToast = showToast;
                     lastNode = filter;
                 });
                 lastNode.connect(gainNode);
-                gainNode.connect(analyserNode);
+                gainNode.connect(compressorNode);
+                compressorNode.connect(analyserNode);
                 analyserNode.connect(audioCtx.destination);
 
                 startVisualizerLoop();
@@ -529,26 +535,51 @@ window.showToast = showToast;
             }
         }
 
+        // --- RETINA & ACCENT HELPERS ---
+        function resizeVisualizer() {
+            if (!visualizerCanvas || !vizCtx) return;
+            const dpr = Math.min(window.devicePixelRatio || 1, 2);
+            visualizerCanvas.width = 260 * dpr;
+            visualizerCanvas.height = 260 * dpr;
+            vizCtx.setTransform(dpr, 0, 0, dpr, 0, 0);
+        }
+
+        function updateCachedAccent() {
+            try {
+                cachedAccentColor = getComputedStyle(document.documentElement).getPropertyValue('--accent').trim() || '#6366f1';
+            } catch (e) {
+                cachedAccentColor = '#6366f1';
+            }
+        }
+
         // --- REAL-TIME AUDIO VISUALIZER ---
         function startVisualizerLoop() {
-            if (visualizerAnimId) cancelAnimationFrame(visualizerAnimId);
+            if (visualizerAnimId) {
+                cancelAnimationFrame(visualizerAnimId);
+                visualizerAnimId = null;
+            }
+            if (!analyserNode || !isPlaying) return;
 
             const bufferLength = analyserNode.frequencyBinCount;
             const dataArray = new Uint8Array(bufferLength);
+            updateCachedAccent();
 
             function render() {
+                if (!isPlaying) {
+                    if (vizCtx) vizCtx.clearRect(0, 0, 260, 260);
+                    visualizerAnimId = null;
+                    return;
+                }
                 visualizerAnimId = requestAnimationFrame(render);
-                vizCtx.clearRect(0, 0, visualizerCanvas.width, visualizerCanvas.height);
-
-                if (!isPlaying) return;
+                vizCtx.clearRect(0, 0, 260, 260);
 
                 analyserNode.getByteFrequencyData(dataArray);
 
-                const width = visualizerCanvas.width;
-                const height = visualizerCanvas.height;
-                const centerX = width / 2;
-                const centerY = height / 2;
-                const primaryAccent = getComputedStyle(document.documentElement).getPropertyValue('--accent').trim() || '#6366f1';
+                const width = 260;
+                const height = 260;
+                const centerX = 130;
+                const centerY = 130;
+                const primaryAccent = cachedAccentColor;
 
                 if (visualizerMode === 0) {
                     const radius = 95;
@@ -672,11 +703,35 @@ window.showToast = showToast;
                 navigator.mediaSession.setActionHandler('nexttrack', nextSong);
                 navigator.mediaSession.setActionHandler('seekbackward', (d) => {
                     audio.currentTime = Math.max(0, audio.currentTime - (d.seekOffset || 10));
+                    updateMediaPositionState();
                 });
                 navigator.mediaSession.setActionHandler('seekforward', (d) => {
                     if (audio.duration) audio.currentTime = Math.min(audio.duration, audio.currentTime + (d.seekOffset || 10));
+                    updateMediaPositionState();
+                });
+                navigator.mediaSession.setActionHandler('seekto', (details) => {
+                    if (details.seekTime !== undefined && details.seekTime !== null) {
+                        if (details.fastSeek && ('fastSeek' in audio)) {
+                            audio.fastSeek(details.seekTime);
+                        } else {
+                            audio.currentTime = details.seekTime;
+                        }
+                        updateMediaPositionState();
+                    }
                 });
             } catch (e) { }
+        }
+
+        function updateMediaPositionState() {
+            if ('mediaSession' in navigator && 'setPositionState' in navigator.mediaSession && audio.duration && !isNaN(audio.duration) && isFinite(audio.duration)) {
+                try {
+                    navigator.mediaSession.setPositionState({
+                        duration: audio.duration,
+                        playbackRate: audio.playbackRate || 1,
+                        position: Math.min(Math.max(0, audio.currentTime), audio.duration)
+                    });
+                } catch (e) { }
+            }
         }
 
         function loadSong(index) {
@@ -737,6 +792,10 @@ window.showToast = showToast;
                 return;
             }
 
+            if ('preservesPitch' in audio) audio.preservesPitch = true;
+            if ('mozPreservesPitch' in audio) audio.mozPreservesPitch = true;
+            if ('webkitPreservesPitch' in audio) audio.webkitPreservesPitch = true;
+
             initWebAudio();
             if (audioCtx && audioCtx.state === 'suspended') {
                 audioCtx.resume();
@@ -748,6 +807,8 @@ window.showToast = showToast;
                     updatePlayBtnUI(true);
                     syncAudioState(true);
                     if ('mediaSession' in navigator) navigator.mediaSession.playbackState = 'playing';
+                    startVisualizerLoop();
+                    updateMediaPositionState();
                 }).catch(err => {
                     updatePlayBtnUI(false);
                     syncAudioState(false);
@@ -755,6 +816,8 @@ window.showToast = showToast;
             } else {
                 updatePlayBtnUI(true);
                 syncAudioState(true);
+                startVisualizerLoop();
+                updateMediaPositionState();
             }
         }
 
@@ -763,6 +826,12 @@ window.showToast = showToast;
             updatePlayBtnUI(false);
             syncAudioState(false);
             if ('mediaSession' in navigator) navigator.mediaSession.playbackState = 'paused';
+            if (visualizerAnimId) {
+                cancelAnimationFrame(visualizerAnimId);
+                visualizerAnimId = null;
+            }
+            if (vizCtx) vizCtx.clearRect(0, 0, 260, 260);
+            updateMediaPositionState();
         }
 
         function togglePlay() {
@@ -871,8 +940,12 @@ window.showToast = showToast;
         function cyclePlaybackSpeed() {
             currentSpeedIdx = (currentSpeedIdx + 1) % speedOptions.length;
             const rate = speedOptions[currentSpeedIdx];
+            if ('preservesPitch' in audio) audio.preservesPitch = true;
+            if ('mozPreservesPitch' in audio) audio.mozPreservesPitch = true;
+            if ('webkitPreservesPitch' in audio) audio.webkitPreservesPitch = true;
             audio.playbackRate = rate;
             speedBadge.textContent = `${rate.toFixed(2).replace(/\.?0+$/, '')}x`;
+            updateMediaPositionState();
         }
 
         // --- EQUALIZER ---
@@ -901,9 +974,12 @@ window.showToast = showToast;
             eqBadge.textContent = `EQ: ${presetName.charAt(0).toUpperCase() + presetName.slice(1)}`;
         }
 
+        let lastActiveLyricEl = null;
+
         // --- LYRICS ---
         function parseAndRenderLyrics(rawLyrics) {
             parsedLrcLines = [];
+            lastActiveLyricEl = null;
             lyricsDisplay.innerHTML = "";
 
             if (!rawLyrics || !rawLyrics.trim()) {
@@ -914,57 +990,62 @@ window.showToast = showToast;
 
             lyricsEditor.value = rawLyrics;
             const lines = rawLyrics.split("\n");
-            const lrcRegex = /\[(\d{2}):(\d{2})\.(\d{2,3})\](.*)/;
+            const timeTagRegex = /\[(\d{1,3}):(\d{2})(?:[.:](\d{1,3}))?\]/g;
 
-            lines.forEach((line, idx) => {
-                const match = line.match(lrcRegex);
-                if (match) {
-                    const mins = parseInt(match[1]);
-                    const secs = parseInt(match[2]);
-                    const ms = parseFloat("0." + match[3]);
-                    const time = mins * 60 + secs + ms;
-                    const text = match[4].trim() || "♪";
+            lines.forEach((line) => {
+                const matches = [...line.matchAll(timeTagRegex)];
+                if (matches.length > 0) {
+                    const text = line.replace(timeTagRegex, "").trim() || "♪";
+                    matches.forEach(match => {
+                        const mins = parseInt(match[1], 10);
+                        const secs = parseInt(match[2], 10);
+                        const frac = match[3] ? parseFloat("0." + match[3]) : 0;
+                        const time = mins * 60 + secs + frac;
 
-                    parsedLrcLines.push({ time, text, index: idx });
+                        const p = document.createElement("p");
+                        p.className = "lyric-line";
+                        p.textContent = text;
+                        p.setAttribute("data-time", time);
+                        p.addEventListener("click", () => {
+                            audio.currentTime = time;
+                            playSong();
+                        });
+                        lyricsDisplay.appendChild(p);
 
-                    const p = document.createElement("p");
-                    p.className = "lyric-line";
-                    p.textContent = text;
-                    p.setAttribute("data-time", time);
-                    p.addEventListener("click", () => {
-                        audio.currentTime = time;
-                        playSong();
+                        parsedLrcLines.push({ time, text, el: p });
                     });
-                    lyricsDisplay.appendChild(p);
                 } else if (line.trim()) {
                     const p = document.createElement("p");
-                    p.className = "lyric-line";
+                    p.className = "lyric-line plain";
                     p.textContent = line.trim();
                     lyricsDisplay.appendChild(p);
                 }
             });
+
+            parsedLrcLines.sort((a, b) => a.time - b.time);
         }
 
         function syncLyrics(currentTime) {
             if (parsedLrcLines.length === 0) return;
 
-            let activeIdx = -1;
+            let activeLine = null;
             for (let i = 0; i < parsedLrcLines.length; i++) {
-                if (currentTime >= parsedLrcLines[i].time) activeIdx = i;
-                else break;
+                if (currentTime >= parsedLrcLines[i].time) {
+                    activeLine = parsedLrcLines[i];
+                } else {
+                    break;
+                }
             }
 
-            const lineEls = lyricsDisplay.querySelectorAll(".lyric-line");
-            lineEls.forEach((el, i) => {
-                if (i === activeIdx) {
-                    if (!el.classList.contains("active")) {
-                        el.classList.add("active");
-                        el.scrollIntoView({ behavior: 'smooth', block: 'center' });
-                    }
-                } else {
-                    el.classList.remove("active");
-                }
-            });
+            if (activeLine && activeLine.el !== lastActiveLyricEl) {
+                if (lastActiveLyricEl) lastActiveLyricEl.classList.remove("active");
+                activeLine.el.classList.add("active");
+                activeLine.el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                lastActiveLyricEl = activeLine.el;
+            } else if (!activeLine && lastActiveLyricEl) {
+                lastActiveLyricEl.classList.remove("active");
+                lastActiveLyricEl = null;
+            }
         }
 
         // --- SLEEP TIMER ---
@@ -1199,9 +1280,12 @@ window.showToast = showToast;
 
             if (songToRemove.isLocal) {
                 removeSongFromDB(songToRemove.id);
-                if (songToRemove.src && songToRemove.src.startsWith("blob:")) {
-                    URL.revokeObjectURL(songToRemove.src);
-                }
+            }
+            if (songToRemove.src && songToRemove.src.startsWith("blob:")) {
+                URL.revokeObjectURL(songToRemove.src);
+            }
+            if (songToRemove.cover && songToRemove.cover.startsWith("blob:")) {
+                URL.revokeObjectURL(songToRemove.cover);
             }
 
             const isCurrent = (idx === songIndex);
@@ -1434,6 +1518,7 @@ window.showToast = showToast;
                     const isSelected = opt.getAttribute("data-theme-val") === themeKey;
                     opt.classList.toggle("active", isSelected);
                 });
+                if (typeof updateCachedAccent === 'function') updateCachedAccent();
             }
 
             themeTriggerBtn.addEventListener("click", (e) => {
@@ -1663,6 +1748,10 @@ window.showToast = showToast;
             // Clear Library
             clearLibraryBtn.addEventListener("click", async () => {
                 if (confirm("Clear all tracks from KnC Music Library?")) {
+                    songs.forEach(s => {
+                        if (s.src && s.src.startsWith("blob:")) URL.revokeObjectURL(s.src);
+                        if (s.cover && s.cover.startsWith("blob:")) URL.revokeObjectURL(s.cover);
+                    });
                     await clearAllSongsFromDB();
                     songs = [];
                     renderPlaylist();
@@ -1676,7 +1765,9 @@ window.showToast = showToast;
 
             // Hotkeys
             document.addEventListener("keydown", (e) => {
-                if (["INPUT", "TEXTAREA", "SELECT"].includes(document.activeElement.tagName)) return;
+                const tag = document.activeElement ? document.activeElement.tagName : "";
+                if (["TEXTAREA", "SELECT"].includes(tag)) return;
+                if (tag === "INPUT" && document.activeElement.type !== "range") return;
 
                 switch (e.code) {
                     case "Space":
@@ -1743,6 +1834,8 @@ window.showToast = showToast;
             setInterval(updateClock, 1000);
             updateClock();
             initFloatingBelt();
+            resizeVisualizer();
+            window.addEventListener("resize", resizeVisualizer);
             if (typeof initHeaderMusicCards === 'function') initHeaderMusicCards();
             if (typeof initSPARouter === 'function') initSPARouter();
             initEventListeners();
@@ -2206,13 +2299,31 @@ window.showToast = showToast;
             const gymPlanView = document.getElementById("gymPlanView");
             const gymCatalogList = document.getElementById("gymCatalogList");
             const selectedCountNumber = document.getElementById("selectedCountNumber");
+            const selectedCountLabel = document.getElementById("selectedCountLabel");
+            const clearGymSelectionBtn = document.getElementById("clearGymSelectionBtn");
             const gymDoneBtn = document.getElementById("gymDoneBtn");
             const gymEditWorkoutBtn = document.getElementById("gymEditWorkoutBtn");
             const planListWrapper = document.getElementById("planListWrapper");
             const planDoneCounter = document.getElementById("planDoneCounter");
+            const planProgressPercent = document.getElementById("planProgressPercent");
+            const planProgressFill = document.getElementById("planProgressFill");
+            const gymFinishWorkoutBtn = document.getElementById("gymFinishWorkoutBtn");
 
             function updateSelectedCount() {
-                selectedCountNumber.textContent = selectedGymWorkouts.length;
+                const count = selectedGymWorkouts.length;
+                if (selectedCountNumber) selectedCountNumber.textContent = count;
+                if (selectedCountLabel) {
+                    selectedCountLabel.textContent = count === 1 ? "Workout selected" : "Workouts selected";
+                }
+                if (gymDoneBtn) {
+                    if (count === 0) {
+                        gymDoneBtn.classList.add("disabled");
+                        gymDoneBtn.setAttribute("aria-disabled", "true");
+                    } else {
+                        gymDoneBtn.classList.remove("disabled");
+                        gymDoneBtn.removeAttribute("aria-disabled");
+                    }
+                }
             }
 
             function renderGymCatalog() {
@@ -2378,6 +2489,9 @@ window.showToast = showToast;
                     planListWrapper.appendChild(card);
                 });
 
+                const pct = totalWorkouts > 0 ? Math.round((doneCount / totalWorkouts) * 100) : 0;
+                if (planProgressPercent) planProgressPercent.textContent = `${pct}%`;
+                if (planProgressFill) planProgressFill.style.width = `${pct}%`;
                 planDoneCounter.textContent = `${doneCount} / ${totalWorkouts} Done`;
             }
 
@@ -2474,6 +2588,21 @@ window.showToast = showToast;
                 });
             });
 
+            // Clear Gym Selection Button
+            if (clearGymSelectionBtn) {
+                clearGymSelectionBtn.addEventListener("click", () => {
+                    if (selectedGymWorkouts.length === 0) return;
+                    if (confirm("Clear all selected exercises from your workout plan?")) {
+                        selectedGymWorkouts = [];
+                        completedGymWorkouts.clear();
+                        completedGymSetKeys.clear();
+                        saveGymState();
+                        renderGymCatalog();
+                        showToast("Gym selection cleared");
+                    }
+                });
+            }
+
             // Done Button
             gymDoneBtn.addEventListener("click", () => {
                 if (selectedGymWorkouts.length === 0) {
@@ -2486,6 +2615,36 @@ window.showToast = showToast;
                 window.scrollTo({ top: 0, behavior: "smooth" });
                 playBeep(880, 0.2);
             });
+
+            // Finish / Done Workout Belt Button
+            if (gymFinishWorkoutBtn) {
+                gymFinishWorkoutBtn.addEventListener("click", () => {
+                    const totalWorkouts = 2 + selectedGymWorkouts.length + 2;
+                    const doneCount = completedGymWorkouts.size;
+
+                    if (selectedGymWorkouts.length === 0) {
+                        showToast("Add your exercises in 'Edit Workout' first!");
+                        return;
+                    }
+
+                    // Record full gym workout to report history
+                    const exercisesList = selectedGymWorkouts.map(w => `${w.name} (${w.sets}×10)`).join(", ");
+                    recordWorkoutLog("gym", "Gym Workout Completed", {
+                        name: `Gym Session (${selectedGymWorkouts.length} Exercises)`,
+                        exercises: exercisesList,
+                        completedCount: doneCount,
+                        totalCount: totalWorkouts,
+                        time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+                    });
+
+                    // Fanfare sounds
+                    playBeep(880, 0.15);
+                    setTimeout(() => playBeep(1100, 0.15), 160);
+                    setTimeout(() => playBeep(1320, 0.3), 320);
+
+                    showToast("🎉 Workout Finished! Great effort — session recorded to Reports!");
+                });
+            }
 
             // Edit Workout Button
             gymEditWorkoutBtn.addEventListener("click", () => {
@@ -4049,6 +4208,73 @@ window.showToast = showToast;
                 }
             });
 
+            // DATA BACKUP (EXPORT & RESTORE)
+            const exportDataBtn = document.getElementById("exportDataBtn");
+            const importDataInput = document.getElementById("importDataInput");
+
+            if (exportDataBtn) {
+                exportDataBtn.addEventListener("click", () => {
+                    try {
+                        const backup = {
+                            version: "2.1",
+                            exportedAt: new Date().toISOString(),
+                            profile: JSON.parse(localStorage.getItem(STORAGE_KEY) || "{}"),
+                            workoutHistory: JSON.parse(localStorage.getItem("knc_workout_history") || "{}"),
+                            weightHistory: JSON.parse(localStorage.getItem("knc_weight_history") || "[]"),
+                            dailyWellness: JSON.parse(localStorage.getItem("knc_daily_wellness") || "{}"),
+                            customExercises: JSON.parse(localStorage.getItem("knc_custom_exercises") || "[]"),
+                            theme: localStorage.getItem("knc_theme") || "indigo"
+                        };
+
+                        const jsonStr = JSON.stringify(backup, null, 2);
+                        const blob = new Blob([jsonStr], { type: "application/json" });
+                        const url = URL.createObjectURL(blob);
+                        const a = document.createElement("a");
+                        const dateStr = new Date().toISOString().slice(0, 10);
+                        a.href = url;
+                        a.download = `knc-wellness-backup-${dateStr}.json`;
+                        document.body.appendChild(a);
+                        a.click();
+                        document.body.removeChild(a);
+                        URL.revokeObjectURL(url);
+                        showToast("Data backup downloaded!");
+                    } catch (err) {
+                        showToast("Failed to export backup");
+                    }
+                });
+            }
+
+            if (importDataInput) {
+                importDataInput.addEventListener("change", (e) => {
+                    const file = e.target.files && e.target.files[0];
+                    if (!file) return;
+
+                    const reader = new FileReader();
+                    reader.onload = (event) => {
+                        try {
+                            const data = JSON.parse(event.target.result);
+                            if (!data || typeof data !== "object") throw new Error("Invalid backup format");
+
+                            if (confirm("Restore data from this backup? Existing records will be updated.")) {
+                                if (data.profile) localStorage.setItem(STORAGE_KEY, JSON.stringify(data.profile));
+                                if (data.workoutHistory) localStorage.setItem("knc_workout_history", JSON.stringify(data.workoutHistory));
+                                if (data.weightHistory) localStorage.setItem("knc_weight_history", JSON.stringify(data.weightHistory));
+                                if (data.dailyWellness) localStorage.setItem("knc_daily_wellness", JSON.stringify(data.dailyWellness));
+                                if (data.customExercises) localStorage.setItem("knc_custom_exercises", JSON.stringify(data.customExercises));
+                                if (data.theme) localStorage.setItem("knc_theme", data.theme);
+
+                                loadProfile();
+                                showToast("Backup restored successfully!");
+                            }
+                        } catch (err) {
+                            showToast("Error reading backup file. Invalid JSON.");
+                        }
+                    };
+                    reader.readAsText(file);
+                    importDataInput.value = "";
+                });
+            }
+
             // INITIALIZE
             loadProfile();
             window.refreshProfileView = () => {
@@ -4074,4 +4300,11 @@ document.addEventListener("DOMContentLoaded", async () => {
 
     // 4. Initial sync of audio state
     syncHeaderMusicCards();
+
+    // 5. Register Service Worker for offline PWA support
+    if ('serviceWorker' in navigator && (window.location.protocol === 'http:' || window.location.protocol === 'https:')) {
+        navigator.serviceWorker.register('./sw.js').catch(err => {
+            console.log('SW registration notice:', err.message);
+        });
+    }
 });
