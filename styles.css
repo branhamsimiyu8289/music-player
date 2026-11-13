@@ -5237,20 +5237,27 @@ body.music-view-active #floatingBelt {
     }
 
     body.music-view-active .cover-visualizer-container {
-        width: min(100%, 22dvh, 220px);
-        height: auto;
-        aspect-ratio: 1;
+        width: min(100%, 250px);
+        height: min(22dvh, 220px);
         flex: 0 1 auto;
         margin: 0 0 2px;
     }
 
     body.music-view-active #visualizerCanvas {
-        width: 100%;
-        height: 100%;
+        width: min(100%, 22dvh, 220px);
+        height: min(100%, 22dvh, 220px);
+    }
+
+    body.music-view-active .cover-speed-btn {
+        left: 0;
+    }
+
+    body.music-view-active .visualizer-toggle-btn {
+        right: 0;
     }
 
     body.music-view-active .cover-wrapper {
-        width: min(62vw, 150px, 19dvh);
+        width: min(62vw, 150px, 19dvh, calc(100% - 100px));
         height: auto;
         aspect-ratio: 1;
     }
@@ -5353,8 +5360,14 @@ body.music-view-active #floatingBelt {
     }
 
     body.music-view-active .cover-visualizer-container {
-        width: min(100%, 21dvh, 150px);
+        width: min(100%, 220px);
+        height: min(21dvh, 150px);
         margin-bottom: 0;
+    }
+
+    body.music-view-active #visualizerCanvas {
+        width: min(100%, 21dvh, 150px);
+        height: min(100%, 21dvh, 150px);
     }
 
     body.music-view-active .clock-time {
