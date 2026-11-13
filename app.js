@@ -83,13 +83,16 @@ function switchView(viewName) {
     syncHeaderMusicCards();
 }
 
+let headerMusicCardsInitialized = false;
+let spaRouterInitialized = false;
+
 function syncHeaderMusicCards(playingState) {
     const audioEl = document.getElementById("audio");
     if (!audioEl) return;
     
     const isPlaying = typeof playingState === "boolean" ? playingState : (!audioEl.paused && !audioEl.ended && audioEl.currentTime > 0);
-    const currentSong = (typeof playlist !== "undefined" && playlist.length > 0 && typeof currentTrackIndex === "number" && currentTrackIndex >= 0) ? playlist[currentTrackIndex] : null;
-    const songName = currentSong && currentSong.title ? currentSong.title : "KnC Music";
+    const currentSong = (typeof songs !== "undefined" && Array.isArray(songs) && songs.length > 0 && typeof songIndex === "number" && songIndex >= 0) ? songs[songIndex] : null;
+    const songName = (currentSong && currentSong.name) ? currentSong.name : ((typeof titleEl !== "undefined" && titleEl && titleEl.textContent && titleEl.textContent !== "No Music Loaded") ? titleEl.textContent : "KnC Music");
     const isClosed = sessionStorage.getItem("knc_music_card_closed") === "true";
 
     document.querySelectorAll(".header-music-card").forEach(card => {
@@ -104,21 +107,28 @@ function syncHeaderMusicCards(playingState) {
 }
 
 function initHeaderMusicCards() {
+    if (headerMusicCardsInitialized) {
+        syncHeaderMusicCards();
+        return;
+    }
+    headerMusicCardsInitialized = true;
+
     // Play / Pause buttons on all header mini-cards
     document.querySelectorAll(".hm-play-btn").forEach(btn => {
         btn.addEventListener("click", (e) => {
             e.stopPropagation();
             e.preventDefault();
-            if (typeof togglePlay === "function") togglePlay();
-        });
-    });
-
-    // Next track buttons on all header mini-cards
-    document.querySelectorAll(".hm-next-btn").forEach(btn => {
-        btn.addEventListener("click", (e) => {
-            e.stopPropagation();
-            e.preventDefault();
-            if (typeof nextSong === "function") nextSong();
+            if (typeof togglePlay === "function") {
+                togglePlay();
+            } else if (typeof audio !== "undefined" && audio) {
+                if (audio.paused) {
+                    if (typeof playSong === "function") playSong();
+                    else audio.play();
+                } else {
+                    if (typeof pauseSong === "function") pauseSong();
+                    else audio.pause();
+                }
+            }
         });
     });
 
@@ -127,7 +137,12 @@ function initHeaderMusicCards() {
         btn.addEventListener("click", (e) => {
             e.stopPropagation();
             e.preventDefault();
-            if (typeof pauseSong === "function") pauseSong();
+            if (typeof pauseSong === "function") {
+                pauseSong();
+            } else {
+                const a = document.getElementById("audio");
+                if (a) a.pause();
+            }
             sessionStorage.setItem("knc_music_card_closed", "true");
             document.querySelectorAll(".header-music-card").forEach(c => c.classList.add("hm-hidden"));
         });
@@ -146,6 +161,8 @@ function initHeaderMusicCards() {
 }
 
 function initSPARouter() {
+    if (spaRouterInitialized) return;
+    spaRouterInitialized = true;
     // Floating belt navigation buttons
     document.querySelectorAll(".floating-belt-item").forEach(item => {
         item.addEventListener("click", (e) => {
@@ -655,12 +672,39 @@ window.showToast = showToast;
             render();
         }
 
-        // --- PLAYBACK CONTROL ---
-        function formatTime(seconds) {
-            if (isNaN(seconds) || seconds === Infinity) return "00:00";
-            const mins = Math.floor(seconds / 60);
-            const secs = Math.floor(seconds % 60);
-            return `${mins < 10 ? '0' : ''}${mins}:${secs < 10 ? '0' : ''}${secs}`;
+        // --- PLAYBACK CONTROL & TIME FORMATTING ---
+        function formatTime(seconds, forceHours = false) {
+            if (isNaN(seconds) || seconds === Infinity || seconds < 0) {
+                return forceHours ? "00:00:00" : "00:00";
+            }
+            const totalSec = Math.floor(seconds);
+            const hrs = Math.floor(totalSec / 3600);
+            const mins = Math.floor((totalSec % 3600) / 60);
+            const secs = totalSec % 60;
+            const pad = (n) => (n < 10 ? '0' : '') + n;
+            if (hrs > 0 || forceHours) {
+                return `${hrs}:${pad(mins)}:${pad(secs)}`;
+            }
+            return `${pad(mins)}:${pad(secs)}`;
+        }
+
+        let showRemainingCountdown = false;
+        function updateTrackTimeDisplay(currentSec, totalSec) {
+            const cur = typeof currentSec === "number" ? currentSec : (audio.currentTime || 0);
+            const dur = typeof totalSec === "number" ? totalSec : (audio.duration || 0);
+            const needsHours = dur >= 3600;
+
+            if (currentTimeEl) {
+                currentTimeEl.textContent = formatTime(cur, needsHours);
+            }
+            if (durationEl) {
+                if (showRemainingCountdown && dur > 0) {
+                    const remaining = Math.max(0, dur - cur);
+                    durationEl.textContent = `-${formatTime(remaining, needsHours)}`;
+                } else {
+                    durationEl.textContent = formatTime(dur, needsHours);
+                }
+            }
         }
 
         function updatePlayBtnUI(playing) {
@@ -791,6 +835,13 @@ window.showToast = showToast;
                 fileInput.click();
                 return;
             }
+
+            // Resuming music removes close state & restores floating notification on other pages
+            try {
+                sessionStorage.removeItem("knc_music_card_closed");
+                document.querySelectorAll(".header-music-card").forEach(c => c.classList.remove("hm-hidden"));
+                if (typeof syncHeaderMusicCards === 'function') syncHeaderMusicCards(true);
+            } catch(e) {}
 
             if ('preservesPitch' in audio) audio.preservesPitch = true;
             if ('mozPreservesPitch' in audio) audio.mozPreservesPitch = true;
@@ -1068,7 +1119,7 @@ window.showToast = showToast;
 
             sleepTimerInterval = setInterval(() => {
                 const remaining = Math.max(0, Math.round((sleepEndTime - Date.now()) / 1000));
-                countdownEl.textContent = formatTime(remaining);
+                countdownEl.textContent = formatTime(remaining, remaining >= 3600);
 
                 if (remaining <= 10 && remaining > 0 && gainNode) {
                     gainNode.gain.value = Math.max(0, (remaining / 10) * parseFloat(volume.value));
@@ -1597,7 +1648,7 @@ window.showToast = showToast;
             audio.addEventListener("timeupdate", () => {
                 if (audio.duration && !isSeeking) {
                     progress.value = (audio.currentTime / audio.duration) * 100;
-                    currentTimeEl.textContent = formatTime(audio.currentTime);
+                    updateTrackTimeDisplay();
                 }
                 syncLyrics(audio.currentTime);
 
@@ -1613,15 +1664,25 @@ window.showToast = showToast;
             });
 
             audio.addEventListener("loadedmetadata", () => {
-                durationEl.textContent = formatTime(audio.duration);
+                updateTrackTimeDisplay();
             });
+
+            if (durationEl) {
+                durationEl.style.cursor = "pointer";
+                durationEl.title = "Click to toggle countdown remaining time";
+                durationEl.addEventListener("click", () => {
+                    showRemainingCountdown = !showRemainingCountdown;
+                    updateTrackTimeDisplay();
+                });
+            }
 
             // Seeking
             progress.addEventListener("mousedown", () => { isSeeking = true; });
             progress.addEventListener("touchstart", () => { isSeeking = true; });
             progress.addEventListener("input", () => {
                 if (audio.duration) {
-                    currentTimeEl.textContent = formatTime((progress.value / 100) * audio.duration);
+                    const seekTime = (progress.value / 100) * audio.duration;
+                    updateTrackTimeDisplay(seekTime, audio.duration);
                 }
             });
             progress.addEventListener("change", () => {
