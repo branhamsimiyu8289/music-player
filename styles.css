@@ -5442,3 +5442,33 @@ body.music-view-active #floatingBelt {
         font-size: 1rem;
     }
 }
+
+@media (max-width: 600px) {
+    body.music-view-active .player-card,
+    body.music-view-active .watch-card {
+        border: 1px solid var(--card-border);
+        box-shadow: var(--shadow-main), inset 0 1px 0 var(--card-border-subtle);
+    }
+
+    body.music-view-active .watch-card {
+        border-radius: var(--radius-lg);
+    }
+}
+
+@media (max-width: 600px) and (min-height: 701px) {
+    body.music-view-active .app-container {
+        justify-content: center;
+        gap: 12px;
+    }
+
+    body.music-view-active .player-card {
+        flex: 0 1 auto;
+        justify-content: flex-start;
+        gap: 8px;
+        padding: 12px;
+    }
+
+    body.music-view-active .watch-card {
+        padding: 10px 16px;
+    }
+}
