@@ -110,10 +110,6 @@ GitHub Pages will serve the static site using `index.html` as the entry file.
 
 This project does not currently include a license file. If you plan to share or reuse it publicly, consider adding an open-source license such as MIT.
 
-## Author
-
-Branham Simiyu
-
 ## Contributing
 
 Contributions are welcome. If you would like to improve the app, consider:
@@ -127,3 +123,7 @@ Contributions are welcome. If you would like to improve the app, consider:
 ## Summary
 
 KnC Music & Wellness is a comprehensive browser application that blends music, fitness, and wellness tracking into a single, polished experience. Its lightweight architecture makes it easy to run, customize, and deploy while supporting practical daily routines and personal productivity.
+
+## Author
+
+Branham Simiyu
