@@ -2145,7 +2145,7 @@ window.showToast = showToast;
             // Record workout completions for Report.html calendar
             function recordWorkoutLog(mode, name, details) {
                 try {
-                    const todayStr = getTodayDateString();
+                    const todayStr = `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, "0")}-${String(today.getDate()).padStart(2, "0")}`;
                     let history = {};
                     try {
                         history = JSON.parse(localStorage.getItem("knc_workout_history") || "{}");
@@ -2160,6 +2160,21 @@ window.showToast = showToast;
                         list.push(details || { name: name, time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) });
                         localStorage.setItem("knc_workout_history", JSON.stringify(history));
                     }
+                } catch (e) {}
+            }
+
+            function removeWorkoutLog(mode, name) {
+                try {
+                    const todayStr = `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, "0")}-${String(today.getDate()).padStart(2, "0")}`;
+                    const history = JSON.parse(localStorage.getItem("knc_workout_history") || "{}");
+                    if (!history[todayStr] || !history[todayStr][mode]) return;
+
+                    history[todayStr][mode] = history[todayStr][mode].filter(item =>
+                        (typeof item === "string" ? item : item.name) !== name
+                    );
+                    if (history[todayStr][mode].length === 0) delete history[todayStr][mode];
+                    if (!history[todayStr].home && !history[todayStr].gym) delete history[todayStr];
+                    localStorage.setItem("knc_workout_history", JSON.stringify(history));
                 } catch (e) {}
             }
 
@@ -2331,6 +2346,7 @@ window.showToast = showToast;
                         e.stopPropagation();
                         if (completedHomeIds.has(ex.id)) {
                             completedHomeIds.delete(ex.id);
+                            removeWorkoutLog("home", ex.name);
                         } else {
                             completedHomeIds.add(ex.id);
                             recordWorkoutLog("home", ex.name, { name: ex.name, muscle: ex.muscle, type: ex.type });
@@ -2603,6 +2619,7 @@ window.showToast = showToast;
                     e.stopPropagation();
                     if (completedGymWorkouts.has(id)) {
                         completedGymWorkouts.delete(id);
+                        removeWorkoutLog("gym", name);
                     } else {
                         completedGymWorkouts.add(id);
                         recordWorkoutLog("gym", name, { name: name, category: badgeText, sets: setCount || 1, reps: 10 });
@@ -2950,31 +2967,30 @@ window.showToast = showToast;
             document.documentElement.setAttribute("data-theme", savedTheme);
 
             // ============================================================
-            // SEED MOCK DATA IF EMPTY (Gives rich calendar & graphs on day 1)
+            // LOCAL DATA INITIALIZATION
             // ============================================================
             function ensureSeedData() {
-                // Workout History
+                // Remove the legacy automatically generated workout history.
+                // It is the exact 17-key sample dataset created by older app versions.
+                try {
+                    const storedWorkoutHistory = JSON.parse(localStorage.getItem("knc_workout_history") || "{}");
+                    const legacyWorkoutDates = new Set([
+                        "2026-09-18", "2026-09-19", "2026-09-21", "2026-09-23", "2026-09-24",
+                        "2026-09-26", "2026-09-28", "2026-09-30", "2026-10-02", "2026-10-04",
+                        "2026-10-06", "2026-10-08", "2026-10-10", "2026-10-11", "2026-10-12",
+                        "2026-10-13", "2026-10-14"
+                    ]);
+                    const storedDates = Object.keys(storedWorkoutHistory);
+                    const isLegacyWorkoutHistory = storedDates.length === legacyWorkoutDates.size &&
+                        storedDates.every(date => legacyWorkoutDates.has(date));
+
+                    if (isLegacyWorkoutHistory) {
+                        localStorage.removeItem("knc_workout_history");
+                    }
+                } catch (e) {}
+
                 if (!localStorage.getItem("knc_workout_history")) {
-                    const sampleHistory = {
-                        "2026-09-18": { home: [{ name: "Standard Push-Ups" }, { name: "Air Squats" }, { name: "Plank Hold" }] },
-                        "2026-09-19": { gym: [{ name: "Barbell Bench Press", sets: 4, reps: 10 }, { name: "Incline Dumbbell Press", sets: 3, reps: 10 }] },
-                        "2026-09-21": { home: [{ name: "Walking Lunges" }, { name: "Burpees" }] },
-                        "2026-09-23": { gym: [{ name: "Barbell Deadlift", sets: 4, reps: 10 }, { name: "Lat Pulldown", sets: 4, reps: 10 }] },
-                        "2026-09-24": { home: [{ name: "Diamond Push-Ups" }, { name: "Bicycle Crunches" }] },
-                        "2026-09-26": { gym: [{ name: "Barbell Back Squats", sets: 4, reps: 10 }, { name: "Leg Press", sets: 4, reps: 10 }] },
-                        "2026-09-28": { home: [{ name: "Doorframe Rows" }, { name: "Glute Bridges" }] },
-                        "2026-09-30": { gym: [{ name: "Military Barbell Press", sets: 4, reps: 10 }, { name: "Lateral Raises", sets: 4, reps: 10 }] },
-                        "2026-10-02": { home: [{ name: "Pike Push-Ups" }, { name: "Mountain Climbers" }] },
-                        "2026-10-04": { gym: [{ name: "Barbell Bicep Curls", sets: 3, reps: 10 }, { name: "Tricep Pushdowns", sets: 4, reps: 10 }] },
-                        "2026-10-06": { home: [{ name: "Air Squats" }, { name: "Forearm Plank" }] },
-                        "2026-10-08": { gym: [{ name: "Bench Press", sets: 4, reps: 10 }, { name: "Cable Flyes", sets: 3, reps: 10 }] },
-                        "2026-10-10": { home: [{ name: "Standard Push-Ups" }, { name: "Glute Bridges" }, { name: "Burpees" }] },
-                        "2026-10-11": { gym: [{ name: "Deadlift", sets: 4, reps: 10 }, { name: "Seated Cable Rows", sets: 4, reps: 10 }] },
-                        "2026-10-12": { home: [{ name: "Walking Lunges" }, { name: "Plank Hold" }] },
-                        "2026-10-13": { gym: [{ name: "Squats", sets: 4, reps: 10 }, { name: "Hamstring Curls", sets: 3, reps: 10 }] },
-                        "2026-10-14": { home: [{ name: "Dynamic Warm-Up" }, { name: "Push-Ups" }, { name: "Mountain Climbers" }], gym: [{ name: "Bench Press", sets: 4, reps: 10 }] }
-                    };
-                    localStorage.setItem("knc_workout_history", JSON.stringify(sampleHistory));
+                    localStorage.setItem("knc_workout_history", "{}");
                 }
 
                 // Weight & BMI History
@@ -3266,39 +3282,63 @@ window.showToast = showToast;
 
                 dates.forEach(d => {
                     const entry = history[d];
-                    if (entry.home && entry.home.length > 0) totalWorkouts++;
+                    if (entry.home && entry.home.length > 0) {
+                        totalWorkouts++;
+                        totalSets += entry.home.length;
+                    }
                     if (entry.gym && entry.gym.length > 0) {
                         totalWorkouts++;
                         entry.gym.forEach(g => {
-                            totalSets += (g.sets || 3);
+                            if (typeof g !== "string" && g.name !== "Gym Workout Completed") {
+                                totalSets += Number(g.sets) || 1;
+                            }
                         });
                     }
                 });
 
-                // Calculate active day streak
-                let streak = 0;
-                let checkDate = new Date();
-                while (true) {
-                    const dStr = checkDate.toISOString().split('T')[0];
-                    const entry = history[dStr];
-                    const hadWorkout = entry && ((entry.home && entry.home.length > 0) || (entry.gym && entry.gym.length > 0));
-                    if (hadWorkout) {
-                        streak++;
-                        checkDate.setDate(checkDate.getDate() - 1);
+                const activeDates = new Set(
+                    dates.filter(d => {
+                        const entry = history[d];
+                        return (entry.home && entry.home.length > 0) ||
+                            (entry.gym && entry.gym.length > 0);
+                    })
+                );
+
+                let bestStreak = 0;
+                let runningStreak = 0;
+                let previousDate = null;
+                dates.forEach(d => {
+                    if (!activeDates.has(d)) return;
+
+                    if (previousDate) {
+                        const gap = (new Date(`${d}T12:00:00`) - previousDate) / 86400000;
+                        runningStreak = gap === 1 ? runningStreak + 1 : 1;
                     } else {
-                        // Allow today to not break streak if user hasn't trained yet today
-                        if (checkDate.toDateString() === today.toDateString()) {
-                            checkDate.setDate(checkDate.getDate() - 1);
-                            continue;
-                        }
-                        break;
+                        runningStreak = 1;
+                    }
+                    previousDate = new Date(`${d}T12:00:00`);
+                    bestStreak = Math.max(bestStreak, runningStreak);
+                });
+
+                const todayStr = getTodayDateString();
+                const yesterday = new Date();
+                yesterday.setDate(yesterday.getDate() - 1);
+                const yesterdayStr = `${yesterday.getFullYear()}-${String(yesterday.getMonth() + 1).padStart(2, "0")}-${String(yesterday.getDate()).padStart(2, "0")}`;
+                let streakEnd = activeDates.has(todayStr) ? todayStr : (activeDates.has(yesterdayStr) ? yesterdayStr : null);
+                let currentStreak = 0;
+
+                if (streakEnd) {
+                    let cursor = new Date(`${streakEnd}T12:00:00`);
+                    while (activeDates.has(`${cursor.getFullYear()}-${String(cursor.getMonth() + 1).padStart(2, "0")}-${String(cursor.getDate()).padStart(2, "0")}`)) {
+                        currentStreak++;
+                        cursor.setDate(cursor.getDate() - 1);
                     }
                 }
 
-                document.getElementById("currentStreakVal").textContent = `${Math.max(streak, 1)} Days`;
-                document.getElementById("bestStreakVal").textContent = `14 Days`;
-                document.getElementById("totalWorkoutsVal").textContent = totalWorkouts || 17;
-                document.getElementById("totalSetsVal").textContent = totalSets || 68;
+                document.getElementById("currentStreakVal").textContent = `${currentStreak} ${currentStreak === 1 ? "Day" : "Days"}`;
+                document.getElementById("bestStreakVal").textContent = `${bestStreak} ${bestStreak === 1 ? "Day" : "Days"}`;
+                document.getElementById("totalWorkoutsVal").textContent = String(totalWorkouts);
+                document.getElementById("totalSetsVal").textContent = String(totalSets);
             }
 
             // ============================================================
@@ -3927,6 +3967,7 @@ window.showToast = showToast;
             renderWellness();
             window.refreshReportView = () => {
                 renderCalendar();
+                computeRecords();
                 renderCharts();
             };
             initFloatingBelt();
