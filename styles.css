@@ -5211,14 +5211,26 @@
 }
 
 @media (min-width: 601px) {
-    body:not(.music-view-active) #floatingBelt {
-        position: relative;
-        left: auto;
-        bottom: auto;
-        margin: 20px auto calc(16px + env(safe-area-inset-bottom, 0px));
+    body[data-active-view="training"] #floatingBelt,
+    body[data-active-view="report"] #floatingBelt {
+        position: fixed;
+        left: 50%;
+        bottom: calc(16px + env(safe-area-inset-bottom, 0px));
+        margin: 0;
+        opacity: 0;
+        pointer-events: none;
+        transform: translate(-50%, calc(100% + 24px));
+    }
+
+    body[data-active-view="training"] #floatingBelt.visible,
+    body[data-active-view="report"] #floatingBelt.visible {
         opacity: 1;
         pointer-events: auto;
-        transform: none;
+        transform: translate(-50%, 0);
+    }
+
+    body[data-active-view="profile"] #floatingBelt {
+        display: none;
     }
 }
 

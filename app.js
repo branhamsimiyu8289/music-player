@@ -10,6 +10,49 @@
 
 let currentView = "music";
 let floatingBeltHideTimeout = null;
+let floatingBeltScrollY = window.scrollY;
+
+function syncFloatingBeltForView(viewName) {
+    const floatingBelt = document.getElementById("floatingBelt");
+    if (!floatingBelt) return;
+
+    const isDesktop = window.matchMedia("(min-width: 601px)").matches;
+    if (viewName === "music" && isDesktop) {
+        floatingBelt.classList.add("visible");
+    } else if (viewName === "training" || viewName === "report") {
+        if (!isDesktop) {
+            floatingBelt.classList.remove("visible");
+        } else {
+            floatingBelt.classList.remove("visible");
+        }
+    } else {
+        floatingBelt.classList.remove("visible");
+    }
+    floatingBeltScrollY = window.scrollY;
+}
+
+let floatingBeltScrollControllerInitialized = false;
+function initDesktopFloatingBeltScrollController() {
+    if (floatingBeltScrollControllerInitialized) return;
+    floatingBeltScrollControllerInitialized = true;
+
+    window.addEventListener("scroll", () => {
+        if (!window.matchMedia("(min-width: 601px)").matches) return;
+        if (currentView !== "training" && currentView !== "report") return;
+
+        const floatingBelt = document.getElementById("floatingBelt");
+        if (!floatingBelt) return;
+        const currentScrollY = window.scrollY;
+
+        if (currentScrollY > floatingBeltScrollY) {
+            floatingBelt.classList.add("visible");
+        } else if (currentScrollY < floatingBeltScrollY) {
+            floatingBelt.classList.remove("visible");
+        }
+
+        floatingBeltScrollY = currentScrollY;
+    }, { passive: true });
+}
 
 function switchView(viewName) {
     if (!viewName) return;
@@ -39,10 +82,7 @@ function switchView(viewName) {
     currentView = cleanView;
     document.body.dataset.activeView = cleanView;
     document.body.classList.toggle("music-view-active", cleanView === "music");
-    const floatingBelt = document.getElementById("floatingBelt");
-    if (floatingBelt) {
-        floatingBelt.classList.add("visible");
-    }
+    syncFloatingBeltForView(cleanView);
 
     // Update floating belt active highlight
     document.querySelectorAll(".floating-belt-item").forEach(item => {
@@ -2930,12 +2970,13 @@ window.showToast = showToast;
                 if (isMobile) {
                     hideBelt();
                 } else {
-                    floatingBelt.classList.add("visible");
-                    if (floatingBeltHideTimeout) clearTimeout(floatingBeltHideTimeout);
-                    floatingBeltHideTimeout = setTimeout(hideBelt, 4000);
+                    hideBelt();
                 }
 
                 window.addEventListener("scroll", () => {
+                    if (!isMobile) {
+                        return;
+                    }
                     const currentScrollY = window.scrollY;
                     if (isMobile && currentView !== lastActiveView) {
                         lastActiveView = currentView;
@@ -2958,15 +2999,6 @@ window.showToast = showToast;
                     lastScrollY = currentScrollY;
                 }, { passive: true });
 
-                if (!isMobile) {
-                    window.addEventListener("mousemove", (e) => {
-                        if (window.innerHeight - e.clientY < 80) {
-                            floatingBelt.classList.add("visible");
-                            if (floatingBeltHideTimeout) clearTimeout(floatingBeltHideTimeout);
-                            floatingBeltHideTimeout = setTimeout(hideBelt, 4000);
-                        }
-                    });
-                }
             }
 
             // INITIALIZATION
@@ -3942,12 +3974,13 @@ window.showToast = showToast;
                 if (isMobile) {
                     hideBelt();
                 } else {
-                    floatingBelt.classList.add("visible");
-                    if (floatingBeltHideTimeout) clearTimeout(floatingBeltHideTimeout);
-                    floatingBeltHideTimeout = setTimeout(hideBelt, 4000);
+                    hideBelt();
                 }
 
                 window.addEventListener("scroll", () => {
+                    if (!isMobile) {
+                        return;
+                    }
                     const currentScrollY = window.scrollY;
                     if (isMobile && currentView !== lastActiveView) {
                         lastActiveView = currentView;
@@ -3970,15 +4003,6 @@ window.showToast = showToast;
                     lastScrollY = currentScrollY;
                 }, { passive: true });
 
-                if (!isMobile) {
-                    window.addEventListener("mousemove", (e) => {
-                        if (window.innerHeight - e.clientY < 80) {
-                            floatingBelt.classList.add("visible");
-                            if (floatingBeltHideTimeout) clearTimeout(floatingBeltHideTimeout);
-                            floatingBeltHideTimeout = setTimeout(hideBelt, 4000);
-                        }
-                    });
-                }
             }
 
             // INITIALIZE
@@ -4455,6 +4479,7 @@ document.addEventListener("DOMContentLoaded", async () => {
 
     // 3. Initialize SPA Router
     initSPARouter();
+    initDesktopFloatingBeltScrollController();
 
     // 4. Initial sync of audio state
     syncHeaderMusicCards();
