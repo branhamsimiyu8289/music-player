@@ -52,9 +52,9 @@ function initDesktopFloatingBeltScrollController() {
         if (!floatingBelt) return;
         const currentScrollY = window.scrollY;
 
-        if (currentScrollY > floatingBeltScrollY) {
+        if (currentScrollY < floatingBeltScrollY) {
             showDesktopFloatingBeltTemporarily(floatingBelt);
-        } else if (currentScrollY < floatingBeltScrollY) {
+        } else if (currentScrollY > floatingBeltScrollY) {
             floatingBelt.classList.remove("visible");
             if (floatingBeltHideTimeout) clearTimeout(floatingBeltHideTimeout);
             floatingBeltHideTimeout = null;
