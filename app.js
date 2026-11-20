@@ -4347,7 +4347,42 @@ window.showToast = showToast;
 // =========================================================================
 // GLOBAL BOOTSTRAPPER
 // =========================================================================
+function disableHoverEffectsOnTouchDevices() {
+    if (!window.matchMedia("(hover: none), (pointer: coarse)").matches) return;
+
+    function stripHoverSelectors(ruleList) {
+        for (let i = ruleList.length - 1; i >= 0; i--) {
+            const rule = ruleList[i];
+
+            if (rule.selectorText) {
+                const selectors = rule.selectorText
+                    .split(",")
+                    .map(selector => selector.trim())
+                    .filter(selector => !selector.includes(":hover"));
+
+                if (selectors.length === 0) {
+                    rule.selectorText = "html:not(.touch-hover-enabled)";
+                } else if (selectors.length !== rule.selectorText.split(",").length) {
+                    rule.selectorText = selectors.join(", ");
+                }
+            } else if (rule.cssRules) {
+                stripHoverSelectors(rule.cssRules);
+            }
+        }
+    }
+
+    for (const styleSheet of document.styleSheets) {
+        try {
+            stripHoverSelectors(styleSheet.cssRules);
+        } catch (error) {
+            // Cross-origin stylesheets cannot be inspected.
+        }
+    }
+}
+
 document.addEventListener("DOMContentLoaded", async () => {
+    disableHoverEffectsOnTouchDevices();
+
     // 1. Initialize Music Player Engine
     if (typeof init === "function") {
         await init();

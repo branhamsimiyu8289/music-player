@@ -5472,3 +5472,11 @@ body.music-view-active #floatingBelt {
         padding: 10px 16px;
     }
 }
+
+@media (hover: none), (pointer: coarse) {
+    *,
+    *::before,
+    *::after {
+        -webkit-tap-highlight-color: transparent;
+    }
+}
