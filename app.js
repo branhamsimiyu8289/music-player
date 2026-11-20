@@ -106,7 +106,7 @@ function switchView(viewName) {
 
     // Update URL hash without reload
     if (window.location.hash !== "#" + cleanView) {
-        history.pushState(null, "", "#" + cleanView);
+        history.pushState({ kncView: cleanView }, "", "#" + cleanView);
     }
 
     // View-specific refresh hooks
@@ -228,7 +228,7 @@ function initSPARouter() {
     document.querySelectorAll(".page-back-button").forEach(btn => {
         btn.addEventListener("click", (e) => {
             e.preventDefault();
-            switchView("music");
+            history.back();
         });
     });
 
@@ -248,7 +248,9 @@ function initSPARouter() {
     if (window.location.hash !== "#music") {
         const musicRootUrl = new URL(window.location.href);
         musicRootUrl.hash = "music";
-        history.replaceState(history.state, "", musicRootUrl.pathname + musicRootUrl.search + musicRootUrl.hash);
+        history.replaceState({ kncView: "music" }, "", musicRootUrl.pathname + musicRootUrl.search + musicRootUrl.hash);
+    } else {
+        history.replaceState({ kncView: "music" }, "", window.location.href);
     }
 
     if (initialHash && validViews.includes(initialHash) && initialHash !== "music") {
