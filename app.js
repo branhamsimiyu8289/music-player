@@ -244,7 +244,14 @@ function initSPARouter() {
 
     // Initial view from hash
     const initialHash = (window.location.hash || "").replace("#", "").toLowerCase().trim();
-    if (initialHash && ["music", "training", "report", "profile"].includes(initialHash)) {
+    const validViews = ["music", "training", "report", "profile"];
+    if (window.location.hash !== "#music") {
+        const musicRootUrl = new URL(window.location.href);
+        musicRootUrl.hash = "music";
+        history.replaceState(history.state, "", musicRootUrl.pathname + musicRootUrl.search + musicRootUrl.hash);
+    }
+
+    if (initialHash && validViews.includes(initialHash) && initialHash !== "music") {
         switchView(initialHash);
     } else {
         switchView("music");
