@@ -1612,13 +1612,28 @@ window.showToast = showToast;
             shuffleBtn.addEventListener("click", () => {
                 isShuffle = !isShuffle;
                 shuffleBtn.classList.toggle("active", isShuffle);
+                shuffleBtn.setAttribute("aria-pressed", String(isShuffle));
+
+                if (isShuffle) {
+                    repeatMode = 0;
+                    repeatBtn.classList.remove("active");
+                    repeatBtn.setAttribute("aria-pressed", "false");
+                    repeatBtn.title = "Repeat Off";
+                }
             });
 
             repeatBtn.addEventListener("click", () => {
                 repeatMode = (repeatMode + 1) % 3;
                 repeatBtn.classList.toggle("active", repeatMode > 0);
+                repeatBtn.setAttribute("aria-pressed", String(repeatMode > 0));
                 const repeatNames = ["Repeat Off", "Repeat All", "Repeat One"];
                 repeatBtn.title = repeatNames[repeatMode];
+
+                if (repeatMode > 0) {
+                    isShuffle = false;
+                    shuffleBtn.classList.remove("active");
+                    shuffleBtn.setAttribute("aria-pressed", "false");
+                }
             });
 
             audio.addEventListener("play", () => updatePlayBtnUI(true));
@@ -1861,6 +1876,12 @@ window.showToast = showToast;
                         break;
                     case "KeyP":
                         prevSong();
+                        break;
+                    case "KeyS":
+                        shuffleBtn.click();
+                        break;
+                    case "KeyR":
+                        repeatBtn.click();
                         break;
                     case "KeyE":
                         openModal(eqModal);
