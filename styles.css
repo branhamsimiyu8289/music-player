@@ -4452,6 +4452,14 @@
             position: static !important;
             margin: 0;
         }
+        @media (min-width: 601px) {
+            .profile-header .header-brand-wrap .page-back-button {
+                display: inline-flex !important;
+                flex: 0 0 40px;
+                width: 40px;
+                height: 40px;
+            }
+        }
         .header-brand {
             display: flex;
             align-items: center;
